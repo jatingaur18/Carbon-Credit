@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
 import AdminSignup from './components/AdminSignup';
 import BuyerSignup from './components/BuyerSignup';
@@ -50,6 +50,11 @@ const App = () => {
   const handleLogout = () => {
     setUser(null);
   };
+
+  
+  useEffect(() => {
+    document.title = "Carbon Credits";
+  }, []);
 
   return (
     <CCProvider>

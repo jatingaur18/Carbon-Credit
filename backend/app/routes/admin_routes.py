@@ -13,6 +13,8 @@ def get_current_user():
         return None
 @admin_bp.route('/api/admin/credits', methods=['GET', 'POST'])
 @jwt_required()
+
+
 def manage_credits():
     current_user = get_current_user()
     if current_user.get('role') != 'admin':
@@ -45,6 +47,7 @@ def manage_credits():
         db.session.add(new_credit)
         db.session.commit()
         return jsonify({"message": "Credit created successfully"}), 201
+
 
 @admin_bp.route('/api/admin/credits/expire/<int:credit_id>', methods=['PATCH'])
 @jwt_required()
