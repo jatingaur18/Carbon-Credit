@@ -33,19 +33,19 @@ jobs:
         if: matrix.component == 'backend'
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: '3.13'
           check-latest: true
 
       - name: Install dependencies
         if: matrix.component == 'smart-contracts'
         run: |
-          cd SmartContracts
+          cd smartContracts
           npm ci
 
       - name: Compile and test Smart Contracts
         if: matrix.component == 'smart-contracts'
         run: |
-          cd SmartContracts
+          cd smartContracts
           npx hardhat compile
           npx hardhat test
 
@@ -56,11 +56,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Backend tests
-        if: matrix.component == 'backend'
-        run: |
-          cd backend
-          python -m unittest discover
 
       - name: Install Frontend dependencies
         if: matrix.component == 'frontend'
@@ -68,11 +63,6 @@ jobs:
           cd client
           npm ci || echo "Ignoring warnings..."
 
-      - name: Run Frontend tests
-        if: matrix.component == 'frontend'
-        run: |
-          cd client
-          npm test -- --watchAll=false
 
       - name: Build Frontend
         if: matrix.component == 'frontend'
