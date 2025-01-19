@@ -119,7 +119,7 @@ Go to backend folder
    ```
 3. Install requirements:
    ```
-   pip install r.txt
+   pip install requirements.txt
    ```
 4. Run Backend:
    ```
