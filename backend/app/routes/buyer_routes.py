@@ -8,7 +8,6 @@ from app.utilis.certificate_generator import generate_certificate_data
 import json
 import io
 import base64
-import xhtml2pdf.pisa as pisa
 from weasyprint import HTML
 from app import db
 
@@ -209,4 +208,4 @@ def download_certificate(creditId):
     return jsonify({
         "filename":f"Carbon_Credit_Certificate_{purchased_credit.id}.pdf",
         "pdf_base64":base64.b64encode(output_buffer.getvalue()).decode('utf-8')
-    }),200
+    })
