@@ -1,1 +1,4 @@
 bin/
+deployments/
+artifacts/
+cache/
