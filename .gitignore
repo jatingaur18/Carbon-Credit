@@ -1,4 +1,4 @@
 bin/
-deployments/
+ignition/deployments/
 artifacts/
 cache/
