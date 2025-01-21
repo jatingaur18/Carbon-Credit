@@ -10,6 +10,10 @@ A carbon credit trading platform leveraging React, Flask, and Solidity to promot
 The test web app deplyed [here](https://carbon-credit-sepolia.vercel.app/) <br>
 The contract deployed at address `0x5E5D1D1Dc0EDDB4f9e9E05FD872642Cd78F6eF51` on Sepolia view it on [EtherScan](https://sepolia.etherscan.io/address/0x5E5D1D1Dc0EDDB4f9e9E05FD872642Cd78F6eF51)
 
+To get started use test credentials:
+- **username:** `test_buyer`
+- **password:** `sepolia`
+
 ## Introduction and Motivation
 
 In India under section 135 of the Companies Act (2013), corporations must spend 2% of their average net profit from the preceding three years on Corporate Social Responsibility (CSR). 
