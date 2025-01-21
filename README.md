@@ -14,6 +14,8 @@ To get started use test credentials:
 - **username:** `test_buyer`
 - **password:** `sepolia`
 
+Or ssee the demo [here](#demo).
+
 ## Introduction and Motivation
 
 In India under section 135 of the Companies Act (2013), corporations must spend 2% of their average net profit from the preceding three years on Corporate Social Responsibility (CSR). 
