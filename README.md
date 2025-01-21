@@ -1,4 +1,16 @@
-# Introduction and Motivation
+# Blockchain based Carbon Credits (Sepolia)
+A carbon credit trading platform leveraging React, Flask, and Solidity to promote transparency andaccountability in CSR activities which are main disadvantages of traditional carbon trading. <br>
+
+**Idea:** Allow companies and corporations to reduce thier *net carbon* emissions by financially helping NGO that help reduce carbon emissions by buying smart contract based *Carbon Tokens* from them.
+- Reduce problems like double spending, ambiguous credit generation, curruption that plague the traditional carbon credits system
+- Implemented a royality system which ensure that 10% of every transaction is given back to NGOs to unsure continues
+- A web app that simulates a blockchain carbon marketplace deployed on sepolia
+  
+## Deployment
+The test web app deplyed [here](https://carbon-credit-sepolia.vercel.app/) <br>
+The contract deployed at address `0x5E5D1D1Dc0EDDB4f9e9E05FD872642Cd78F6eF51` on Sepolia view it on [EtherScan](https://sepolia.etherscan.io/address/0x5E5D1D1Dc0EDDB4f9e9E05FD872642Cd78F6eF51)
+
+## Introduction and Motivation
 
 In India under section 135 of the Companies Act (2013), corporations must spend 2% of their average net profit from the preceding three years on Corporate Social Responsibility (CSR). 
 However, many companies resort to "greenwashing" rather than making genuine societal contributions. Simultaneously, NGOs face inadequate funding, limiting their ability to execute impactful projects.
@@ -6,11 +18,11 @@ However, many companies resort to "greenwashing" rather than making genuine soci
 A decentralized Carbon Credit system leveraging blockchain can address these challenges. 
 It ensures timely funding for NGOs, promotes transparency and accountability in CSR activities, and aligns corporate efforts with genuine societal and environmental betterment.
 
-## History
+### History
 Carbon trading originated in the 1990s as a market-based solution to combat climate change, starting with the Kyoto Protocol in 1997, which introduced emissions trading among countries.
 It later evolved into voluntary markets and cap-and-trade systems, allowing companies to trade carbon credits globally.
 
-# Workflow
+## Workflow
 1. NGOs will register on the platform and create Carbon Credits based on thier projects which will then be put up for sale.
 
 2. Companies or traders can buy these can buy these credits from the NGO and resell them further if they wish to.
@@ -30,7 +42,7 @@ It later evolved into voluntary markets and cap-and-trade systems, allowing comp
 ![Sequence diagram (1)](https://github.com/user-attachments/assets/43ac8bd4-a24c-4416-a607-5263a31e3cf2)
 
 
-# Demo
+## Demo
 https://github.com/user-attachments/assets/91819c9c-db4c-48b8-a065-31542ac41313
 
 
@@ -38,7 +50,7 @@ https://github.com/user-attachments/assets/91819c9c-db4c-48b8-a065-31542ac41313
 
 
 
-# Tech Stack
+## Tech Stack
 ### Smart Contract:
 *Language*: Solidity  
 *Testing and Deployment*: Hardhat  
@@ -60,17 +72,21 @@ https://github.com/user-attachments/assets/91819c9c-db4c-48b8-a065-31542ac41313
 
 <img src="https://www.pngitem.com/pimgs/m/159-1595977_flask-python-logo-hd-png-download.png" alt="Image 1" height="50"> <t> <img src="https://i.imgur.com/29bmffy.png" alt="Image 1" height="50">
 
-# Setup & Installation
-Learn more about about hardhhat and for troubleshooting check [here](https://hardhat.org/hardhat-runner/docs/getting-started)
+## Setup & Installation
+*If you want to create your own smart contract*
+
+
 
 ### Smart Contract:
 1. Installing hardhat:
+   Learn more about about hardhhat and for troubleshooting check [here](https://hardhat.org/hardhat-runner/docs/getting-started)
    Go to SmartContracts folder
    ```
    npm install --save-dev hardhat
    ```
-3. Create a `.env` file and add:
-   ```
+2. Create a `.env` file and add:
+   (will be required if you want to deploy on Sepolia otherwise remove sepolia from `smartContracts\hardhta.config.js`)
+    ```
    TESTNET_URL=<YOUR_ALCHEMY_OR_INFURA_URL>
    PRIVATE_KEY=<YOUR_METAMASK_PRIVATE_KEY>
    ```
@@ -105,7 +121,13 @@ Learn more about about hardhhat and for troubleshooting check [here](https://har
   
      
    ![image](https://github.com/user-attachments/assets/ebe78e0b-9e32-4edc-b00e-fb84fd5ee32a)
-
+   
+8. To Deploy on sepolia
+   ```
+   npx hardhat ignition deploy ./ignition/modules/cc.js --network sepolia
+   ```
+   remeber to enable sepolia on metamask to access it 
+   
 ### Back-end:
 Go to backend folder
 1. Create virtual env (not needed in windows):
@@ -134,7 +156,7 @@ Go to client folder
 2. Start client:
    ```
    npm start
-   ```
+   ```This role excites me because it offers the chance to work on impactful projects, utilizing cutting-edge technologies while enhancing my technical skills. As someone passionate about problem-solving and building efficient software solutions, this position aligns with my career aspirations and provides an opportunity to learn from experts in the field.
    it should start at `http://127.0.0.1:3000/`
 
 ### References:
