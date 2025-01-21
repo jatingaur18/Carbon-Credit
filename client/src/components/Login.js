@@ -15,23 +15,24 @@ const Login = ({ onLogin }) => {
     try {
       const response = await login(formData);
       localStorage.setItem('token', response.data.access_token);
-      onLogin({ username: formData.username, role: formData.role });
-      navigate(formData.role === 'admin' ? '/admin-dashboard' : '/buyer-dashboard');
+      const userRole = response.data.role;
+      onLogin({ username: formData.username, role: userRole });
+      navigate(userRole === 'admin' ? '/admin-dashboard' : '/buyer-dashboard');
     } catch (error) {
       console.error('Login failed:', error);
-      
+
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    <div className="overflow-hidden mx-auto max-w-md bg-white rounded-xl shadow-md md:max-w-2xl">
       <div className="md:flex">
         <div className="p-8 w-full">
-          <div className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">Welcome back</div>
-          <h2 className="block mt-1 text-lg leading-tight font-medium text-black">Login to your account</h2>
+          <div className="mb-1 text-sm font-semibold tracking-wide uppercase text-primary">Welcome back</div>
+          <h2 className="block mt-1 text-lg font-medium leading-tight text-black">Login to your account</h2>
           <form onSubmit={handleSubmit} className="mt-6">
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="username">
                 Username
               </label>
               <input
@@ -45,7 +46,7 @@ const Login = ({ onLogin }) => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
                 Password
               </label>
               <input
@@ -59,7 +60,7 @@ const Login = ({ onLogin }) => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="role">
                 Role
               </label>
               <select
@@ -73,7 +74,7 @@ const Login = ({ onLogin }) => {
                 <option value="admin">Admin</option>
               </select>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between items-center">
               <button className="btn btn-primary" type="submit">
                 Sign In
               </button>
