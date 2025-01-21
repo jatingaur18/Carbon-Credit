@@ -56,9 +56,9 @@ https://github.com/user-attachments/assets/91819c9c-db4c-48b8-a065-31542ac41313
 
 ### Back-end:
 *Framework*: Python-Flask <br>
-*Database*: SQLite 
+*Database*: PostgreSQL 
 
-<img src="https://www.pngitem.com/pimgs/m/159-1595977_flask-python-logo-hd-png-download.png" alt="Image 1" height="50"> <t> <img src="https://github.com/user-attachments/assets/8957e289-ce99-4bca-8db1-457449ed5bab" alt="Image 1" height="50">
+<img src="https://www.pngitem.com/pimgs/m/159-1595977_flask-python-logo-hd-png-download.png" alt="Image 1" height="50"> <t> <img src="https://i.imgur.com/29bmffy.png" alt="Image 1" height="50">
 
 # Setup & Installation
 Learn more about about hardhhat and for troubleshooting check [here](https://hardhat.org/hardhat-runner/docs/getting-started)
@@ -72,7 +72,7 @@ Learn more about about hardhhat and for troubleshooting check [here](https://har
 3. Create a `.env` file and add:
    ```
    TESTNET_URL=<YOUR_ALCHEMY_OR_INFURA_URL>
-   TESTNET_PRIVATE_KEY=<YOUR_METAMASK_PRIVATE_KEY>
+   PRIVATE_KEY=<YOUR_METAMASK_PRIVATE_KEY>
    ```
    To get alchemy/infura url go to [Alechmy](https://dashboard.alchemy.com/apps/xpoq0n411rf3vtfr/setup) or [Infura](https://www.infura.io/)
    To get private key Metamask -> account details -> show private key (it will be preffered to use spare account for this)
