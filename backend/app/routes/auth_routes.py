@@ -1,12 +1,26 @@
+import requests
 from flask import Blueprint, request, jsonify
 from app import db, bcrypt, create_access_token
 from app.models.user import User
 import json
-auth_bp = Blueprint('auth', __name__)
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
+auth_bp = Blueprint('auth', __name__)
+SECRET_KEY =os.getenv('SECRET_KEY','1x0000000000000000000000000000000AA')
 @auth_bp.route('/api/signup', methods=['POST'])
 def signup():
     data = request.json
+    captcha_response = data.get('cf-turnstile-response')
+    captcha_verify = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify',
+                                   data={
+                                   'secret': SECRET_KEY,
+                                   'response': captcha_response,
+                                   }).json()
+    print(captcha_verify)
+    if not captcha_verify.get('success'):
+        return jsonify({"message":"CAPTCHA failed"}),400
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = User(username=data['username'], email=data['email'], password=hashed_password, role=data['role'])
     db.session.add(new_user)
