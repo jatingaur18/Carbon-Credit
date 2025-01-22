@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { signup } from '../api/api';
-
+import { Turnstile } from '@marsidev/react-turnstile';
 const AdminSignup = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-
+  const [captchaToken, setCaptchaToken] = useState('');
+  const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -11,23 +12,23 @@ const AdminSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signup({ ...formData, role: 'admin' }); 
-      
+      await signup({ ...formData, role: 'admin', 'cf-turnstile-response': captchaToken });
+
     } catch (error) {
       console.error('Signup failed:', error);
-      
+
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    <div className="overflow-hidden mx-auto max-w-md bg-white rounded-xl shadow-md md:max-w-2xl">
       <div className="md:flex">
         <div className="p-8 w-full">
-          <div className="uppercase tracking-wide text-sm text-primary font-semibold mb-1">Admin Registration</div>
-          <h2 className="block mt-1 text-lg leading-tight font-medium text-black">Create an admin account</h2>
+          <div className="mb-1 text-sm font-semibold tracking-wide uppercase text-primary">Admin Registration</div>
+          <h2 className="block mt-1 text-lg font-medium leading-tight text-black">Create an admin account</h2>
           <form onSubmit={handleSubmit} className="mt-6">
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="username">
                 Username
               </label>
               <input
@@ -41,7 +42,7 @@ const AdminSignup = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
                 Email
               </label>
               <input
@@ -55,7 +56,7 @@ const AdminSignup = () => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+              <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
                 Password
               </label>
               <input
@@ -68,7 +69,19 @@ const AdminSignup = () => {
                 required
               />
             </div>
-            <div className="flex items-center justify-between">
+            <div>
+              <Turnstile
+                options={{
+                  theme: 'light',
+                }}
+                siteKey={SITE_KEY}
+                onError={() => alert('CAPTCHA failed Try again')}
+                onSuccess={(token) => setCaptchaToken(token)}
+
+
+              />
+            </div>
+            <div className="flex justify-between items-center">
               <button className="btn btn-primary" type="submit">
                 Sign Up
               </button>
