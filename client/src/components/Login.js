@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
-
+import { Turnstile } from '@marsidev/react-turnstile';
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({ username: '', password: '', role: 'buyer' });
+  const [captchaToken, setCaptchaToken] = useState('');
   const navigate = useNavigate();
-
+  const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA.');
+      return;
+    }
     e.preventDefault();
     try {
-      const response = await login(formData);
+      const response = await login({ ...formData, 'cf-turnstile-response': captchaToken });
       localStorage.setItem('token', response.data.access_token);
       const userRole = response.data.role;
       onLogin({ username: formData.username, role: userRole });
@@ -73,6 +78,18 @@ const Login = ({ onLogin }) => {
                 <option value="buyer">Buyer</option>
                 <option value="admin">Admin</option>
               </select>
+            </div>
+            <div>
+              <Turnstile
+                options={{
+                  theme: 'light',
+                }}
+                siteKey={SITE_KEY}
+                onError={() => alert('CAPTCHA failed Try again')}
+                onSuccess={(token) => setCaptchaToken(token)}
+
+
+              />
             </div>
             <div className="flex justify-between items-center">
               <button className="btn btn-primary" type="submit">

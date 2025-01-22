@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import { signup } from '../api/api';
-
+import { Turnstile } from '@marsidev/react-turnstile';
 const BuyerSignup = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [captchaToken, setCaptchaToken] = useState('');
 
+  const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA.');
+      return;
+    }
     e.preventDefault();
     try {
-      await signup({ ...formData, role: 'buyer' });
+      await signup({ ...formData, role: 'buyer', 'cf-turnstile-response': captchaToken });
 
     } catch (error) {
       console.error('Signup failed:', error);
@@ -66,6 +72,19 @@ const BuyerSignup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+              />
+            </div>
+
+            <div>
+              <Turnstile
+                options={{
+                  theme: 'light',
+                }}
+                siteKey={SITE_KEY}
+                onError={() => alert('CAPTCHA failed Try again')}
+                onSuccess={(token) => setCaptchaToken(token)}
+
+
               />
             </div>
             <div className="flex justify-between items-center">
