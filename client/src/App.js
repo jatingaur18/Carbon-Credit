@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Route, Routes, Navigate, Link, useNavigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import AdminSignup from './components/AdminSignup';
 import BuyerSignup from './components/BuyerSignup';
 import Login from './components/Login';
@@ -12,35 +13,8 @@ import { CCProvider } from './context/SmartContractConnector';
 import { jwtDecode } from "jwt-decode";
 
 
-const Navigation = ({ user, onLogout }) => (
-  <nav className="bg-white shadow-md">
-    <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center h-16">
-        <div className="flex-shrink-0">
-          <span className="text-2xl font-bold text-primary">CarbonCredit</span>
-        </div>
-        <div className="hidden sm:flex sm:ml-6 sm:space-x-4">
-          {!user && (
-            <>
-              <Link to="/login" className="py-2 px-3 text-sm font-medium text-gray-700 rounded-md transition duration-150 ease-in-out hover:bg-gray-100 hover:text-primary">Login</Link>
-              <Link to="/admin-signup" className="py-2 px-3 text-sm font-medium text-gray-700 rounded-md transition duration-150 ease-in-out hover:bg-gray-100 hover:text-primary">Admin Signup</Link>
-              <Link to="/buyer-signup" className="py-2 px-3 text-sm font-medium text-gray-700 rounded-md transition duration-150 ease-in-out hover:bg-gray-100 hover:text-primary">Buyer Signup</Link>
-            </>
-          )}
-          {user && user.role === 'admin' && (
-            <Link to="/admin-dashboard" className="py-2 px-3 text-sm font-medium text-gray-700 rounded-md transition duration-150 ease-in-out hover:bg-gray-100 hover:text-primary">Admin Dashboard</Link>
-          )}
-          {user && user.role === 'buyer' && (
-            <Link to="/buyer-dashboard" className="py-2 px-3 text-sm font-medium text-gray-700 rounded-md transition duration-150 ease-in-out hover:bg-gray-100 hover:text-primary">Buyer Dashboard</Link>
-          )}
-          {user && (
-            <button onClick={onLogout} className="py-2 px-3 text-sm font-medium text-gray-700 rounded-md transition duration-150 ease-in-out hover:bg-gray-100 hover:text-primary">Logout</button>
-          )}
-        </div>
-      </div>
-    </div>
-  </nav>
-);
+
+
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -73,7 +47,12 @@ const App = () => {
             username: parsedSub.username,
             role: parsedSub.role
           });
-          navigate(parsedSub.role === 'admin' ? '/admin-dashboard' : '/buyer-dashboard');
+          // let currentPath = window.location.pathname;
+          // console.log(currentPath);
+          // navigate(currentPath);
+          if (window.location.pathname === '/' || window.location.pathname === '/login') {
+            navigate(parsedSub.role === 'admin' ? '/admin-dashboard' : '/buyer-dashboard');
+          }
           
         }
         else{
@@ -89,17 +68,17 @@ const App = () => {
         navigate('/login');
       }
       
-    } 
+    }
   }, [navigate]);
 
   return (
     <CCProvider>
       {/* <Router> */}
-        <div className="min-h-screen bg-background">
-          <Navigation user={user} onLogout={handleLogout} />
-          <div className="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div >
+          <Navbar user={user} onLogout={handleLogout} />
+          <div >
             <Routes>
-              <Route path="/home" elemnent={<Home/>} />
+              <Route path="/home" element={<Home/>} />
               <Route path="/admin-signup" element={<AdminSignup onLogin={handleLogin}/>} />
               <Route path="/buyer-signup" element={<BuyerSignup onLogin={handleLogin} />} />
               <Route path="/login" element={<Login onLogin={handleLogin} />} />
@@ -124,7 +103,7 @@ const App = () => {
                 user? 
                 user.role==='admin'? <Navigate to="/admin-dashboard" replace/>: <Navigate to="/buyer-dashboard" replace/>
 
-                : <Navigate to="/login" replace/>}
+                : <Navigate to="/home" replace/>}
               />
             </Routes>
           </div>

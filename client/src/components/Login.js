@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
     }
     e.preventDefault();
     try {
-      
+
       const response = await login({ ...formData, 'cf-turnstile-response': captchaToken });
       localStorage.setItem('token', response.data.access_token);
       const userRole = response.data.role;
@@ -32,7 +32,7 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="overflow-hidden mx-auto max-w-md bg-white rounded-xl shadow-md md:max-w-2xl">
+    <div className="overflow-hidden mx-auto max-w-md bg-emerald-100/80  rounded-xl shadow-md md:max-w-2xl">
       <div className="md:flex">
         <div className="p-8 w-full">
           <div className="mb-1 text-sm font-semibold tracking-wide uppercase text-primary">Welcome back</div>
