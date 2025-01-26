@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { signup } from '../api/api';
+import { signup,login } from '../api/api';
 import { Turnstile } from '@marsidev/react-turnstile';
-const BuyerSignup = () => {
+import { useNavigate } from 'react-router-dom';
+
+
+const BuyerSignup = ({onLogin}) => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [captchaToken, setCaptchaToken] = useState('');
-
+  const navigate = useNavigate();
   const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,8 +20,15 @@ const BuyerSignup = () => {
     }
     e.preventDefault();
     try {
+      console.log("FormData:", formData);
       await signup({ ...formData, role: 'buyer', 'cf-turnstile-response': captchaToken });
+      const loginResponse = await login({...formData,role: 'buyer', 'cf-turnstile-response': captchaToken });
 
+      localStorage.setItem("token", loginResponse.data.access_token);
+
+      onLogin({ username: formData.username, role: 'buyer'});
+      navigate('/buyer-dashboard');
+      
     } catch (error) {
       console.error('Signup failed:', error);
 

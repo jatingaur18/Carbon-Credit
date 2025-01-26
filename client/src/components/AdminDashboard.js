@@ -2,20 +2,15 @@ import React, { useContext, useState, useEffect } from 'react';
 import { getAdminCredits, createAdminCredit, getTransactions, expireCreditApi, verifyBeforeExpire } from '../api/api';
 import { CC_Context } from "../context/SmartContractConnector.js";
 import Swal from 'sweetalert2';
-import { ethers } from "ethers";
 
-const AdminDashboard = ({ onLogout }) => {
+
+const AdminDashboard = () => {
 
   const { 
     connectWallet, 
     generateCredit, 
-    getCreditDetails,
     getNextCreditId,
-    expireCredit,
-    sellCredit,
-    buyCredit,
-    currentAccount, 
-    error 
+    expireCredit
   } = useContext(CC_Context);
 
   const [myCredits, setMyCredits] = useState([]);
@@ -269,11 +264,6 @@ const AdminDashboard = ({ onLogout }) => {
         </dl>
       </div>
 
-      <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-        <button onClick={onLogout} className="btn btn-secondary">
-          Logout
-        </button>
-      </div>
       <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt className="text-sm font-medium text-gray-500">Transactions</dt>
         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">

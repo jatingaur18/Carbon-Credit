@@ -5,6 +5,8 @@ from app.models.user import User
 import json
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
+
 load_dotenv()
 
 auth_bp = Blueprint('auth', __name__)
@@ -39,12 +41,15 @@ def login():
                                    }).json()
     if not captcha_verify.get('success'):
         return jsonify({"message":"CAPTCHA failed"}),400
+    
     user = User.query.filter_by(username=data['username']).first()
+
     if user and bcrypt.check_password_hash(user.password, data['password']):
         if data['role'] != user.role:
             return jsonify({"message": "Unauthorized"}),403
         identity = json.dumps({"username": user.username, "role": user.role})
-        access_token = create_access_token(identity=identity)
+        expires = timedelta(hours=12)
+        access_token = create_access_token(identity=identity, expires_delta= expires)
         return jsonify(access_token=access_token,role=user.role), 200
     return jsonify({"message": "Invalid credentials"}), 401
 
