@@ -54,11 +54,11 @@ const BuyerDashboard = () => {
       setError(null);
       //NOTE: the -1 is temporary
       // const price = await getPrice();
-      const credit = await getCreditDetails(creditId - 1);
+      const credit = await getCreditDetails(creditId );
       // Convert the price from wei to ether for the transaction
       const priceInEther = ethers.formatEther(credit.price);
-      console.log("id, price: ", creditId - 1, priceInEther);
-      await buyCredit(creditId - 1, priceInEther);
+      console.log("id, price: ", creditId , priceInEther);
+      await buyCredit(creditId , priceInEther);
       await purchaseCredit({ credit_id: creditId, amount: 1 });
       await fetchAllCredits(); // Refresh both available and purchased credits
     } catch (error) {
@@ -124,7 +124,7 @@ const BuyerDashboard = () => {
       console.log(`Credit put on sale with price: ${updatedCredit.salePrice}`);
 
       // Call API to mark credit as on sale in the backend and contract
-      await sellCredit(creditId - 1, updatedCredit.salePrice);
+      await sellCredit(creditId , updatedCredit.salePrice);
       const respose = await sellCreditApi({ credit_id: creditId, salePrice: updatedCredit.salePrice });
       console.log(respose);
       await fetchAllCredits();
@@ -145,7 +145,7 @@ const BuyerDashboard = () => {
       );
 
       // Call API to remove the credit from sale in the backend
-      await removeFromSale(creditId - 1);
+      await removeFromSale(creditId );
       await removeSaleCreditApi({ credit_id: creditId })
       console.log(`Removed credit ID ${creditId} from sale`);
       await fetchAllCredits();

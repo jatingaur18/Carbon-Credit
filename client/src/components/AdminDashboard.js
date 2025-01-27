@@ -36,33 +36,36 @@ const AdminDashboard = () => {
     fetchCredits();
   }, []);
 
-  const [newCredit, setNewCredit] = useState({creditId:0, name: '', amount: 0, price: 0 });
+  const [newCredit, setNewCredit] = useState({creditId:0, name: '', amount: '', price: '' });
 
   const handleCreateCredit = async (e) => {
     e.preventDefault();
-
+  
     if (!newCredit.name || !newCredit.amount || !newCredit.price) {
       alert("Please fill in all fields!");
       return;
     }
-
+  
     try {
-      
-      let newCreditId = getNextCreditId();
-      setNewCredit((prevState) => ({ ...prevState, creditId: newCreditId }));
-
-      await generateCredit(newCredit.amount, newCredit.price);
-      const response = await createAdminCredit(newCredit);
-
+      const newCreditId = await getNextCreditId(); // Resolve the promise
+      console.log("Resolved newCredit ID:", newCreditId);
+  
+      const updatedCredit = { ...newCredit, creditId: Number(newCreditId) }; // Update with the resolved ID
+      console.log("Updated Credit Object:", updatedCredit);
+  
+      await generateCredit(updatedCredit.amount, updatedCredit.price); // Use updated credit here
+      const response = await createAdminCredit(updatedCredit);
+  
       // Refetch the updated credit list after successful creation
       const updatedCredits = await getAdminCredits();
       setMyCredits(updatedCredits.data);
-
-      setNewCredit({ name: '', amount: 0, price: 0 });
+  
+      setNewCredit({ name: "", amount: 0, price: 0, creditId: 0 });
     } catch (error) {
-      console.error('Failed to create credit:', error);
+      console.error("Failed to create credit:", error);
     }
   };
+  
 
   const handleInputChange = (e) => {
     setNewCredit({ ...newCredit, [e.target.name]: e.target.value });
@@ -136,7 +139,7 @@ const AdminDashboard = () => {
 
   const handleExpireCredit = async (creditId) => {
     console.log(`Expire credit called for credit ID: ${creditId}`);
-    const SC_Credit_Id = creditId - 1;
+    const SC_Credit_Id = creditId;
   
     try {
       const response = await expireCreditApi(creditId);
@@ -244,7 +247,7 @@ const AdminDashboard = () => {
                 >
                   <div className="w-0 flex-1 flex items-center">
                     <span className="ml-2 flex-1 w-0 truncate">
-                      {credit.id - 1}: {credit.name} - Amount: {credit.amount}, Price: {credit.price} ETH
+                      {credit.id}: {credit.name} - Amount: {credit.amount}, Price: {credit.price} ETH
                     </span>
                   </div>
                 {!credit.is_expired && (

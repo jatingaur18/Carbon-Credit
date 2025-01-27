@@ -39,6 +39,7 @@ def manage_credits():
     if request.method == 'POST':
         data = request.json
         new_credit = Credit(
+            id=data['creditId'],
             name=data['name'], 
             amount=data['amount'], 
             price=data['price'], 
