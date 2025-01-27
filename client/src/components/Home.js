@@ -1,8 +1,17 @@
 import React from 'react';
 import { Globe, Lock, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Home = () => {
+
+  const logged = Boolean(localStorage.getItem('token'));
+  // if(!token){
+
+  // }
+  // const decodedToken = jwtDecode(token);
+  // const logged = decodedToken.exp * 1000 < Date.now();
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-green-50 to-emerald-100 flex flex-col">
       
@@ -25,12 +34,14 @@ const Home = () => {
           <div className="flex space-x-4">
             <Link to='/login'>
                 <button className="bg-emerald-600 text-white px-6 py-3 rounded-full hover:bg-emerald-700 transition">
-                Login
+                {logged? 'Dashboard': 'Login'}
                 </button>
             </Link>
+            <a href='https://github.com/devansh-srv/Carbon-Credit'>
             <button className="border-2 border-emerald-600 text-emerald-700 px-6 py-3 rounded-full hover:bg-emerald-50 transition">
-              Learn More
+              GitHub
             </button>
+            </a>
           </div>
         </div>
 
