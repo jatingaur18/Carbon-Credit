@@ -2,16 +2,16 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-body {
-  @apply bg-background text-gray-800 font-sans;
-}
+/* body {
+  @apply text-gray-800 font-sans;
+} */
 
 .btn {
   @apply px-4 py-2 rounded-md text-white font-semibold transition-colors duration-300;
 }
 
 .btn-primary {
-  @apply bg-primary hover:bg-blue-600;
+  @apply bg-primary hover:bg-green-800;
 }
 
 .btn-secondary {

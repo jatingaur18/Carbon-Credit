@@ -4,7 +4,7 @@ import { CC_Context } from "../context/SmartContractConnector.js";
 import { ethers } from "ethers";
 
 
-const BuyerDashboard = ({ onLogout }) => {
+const BuyerDashboard = () => {
   const [availableCredits, setAvailableCredits] = useState([]);
   const [purchasedCredits, setPurchasedCredits] = useState([]);
   const [certificateData, setCertificateData] = useState(null);
@@ -295,11 +295,7 @@ const BuyerDashboard = ({ onLogout }) => {
           )}
         </dl>
       </div>
-      <div className="py-3 px-4 text-right bg-gray-50 sm:px-6">
-        <button onClick={onLogout} className="btn btn-secondary">
-          Logout
-        </button>
-      </div>
+      
     </div>
   );
 };
