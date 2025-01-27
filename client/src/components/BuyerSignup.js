@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { signup,login } from '../api/api';
+import { signup, login } from '../api/api';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useNavigate } from 'react-router-dom';
 
 
-const BuyerSignup = ({onLogin}) => {
+const BuyerSignup = ({ onLogin }) => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [captchaToken, setCaptchaToken] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,13 +23,13 @@ const BuyerSignup = ({onLogin}) => {
     try {
       console.log("FormData:", formData);
       await signup({ ...formData, role: 'buyer', 'cf-turnstile-response': captchaToken });
-      const loginResponse = await login({...formData,role: 'buyer', 'cf-turnstile-response': captchaToken });
+      const loginResponse = await login({ ...formData, role: 'buyer', 'cf-turnstile-response': captchaToken });
 
       localStorage.setItem("token", loginResponse.data.access_token);
 
-      onLogin({ username: formData.username, role: 'buyer'});
+      onLogin({ username: formData.username, role: 'buyer' });
       navigate('/buyer-dashboard');
-      
+
     } catch (error) {
       console.error('Signup failed:', error);
 
@@ -37,10 +37,10 @@ const BuyerSignup = ({onLogin}) => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-blue-400 py-12 px-4">
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-sm rounded-xl shadow-xl">
+    <div className="flex justify-center items-center py-12 px-4 w-full min-h-screen bg-gradient-to-br from-indigo-500 to-blue-400">
+      <div className="w-full max-w-md rounded-xl shadow-xl bg-white/90 backdrop-blur-sm">
         <div className="p-8">
-          <div className="mb-1 text-sm font-semibold tracking-wide uppercase text-blue-700">Buyer Registration</div>
+          <div className="mb-1 text-sm font-semibold tracking-wide text-blue-700 uppercase">Buyer Registration</div>
           <h2 className="block mt-1 text-2xl font-medium leading-tight text-blue-900">Create a buyer account</h2>
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
             <div>
@@ -48,8 +48,7 @@ const BuyerSignup = ({onLogin}) => {
                 Username
               </label>
               <input
-                className="w-full px-3 py-2 bg-white/50 border border-blue-300 rounded-lg 
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="py-2 px-3 w-full rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white/50"
                 id="username"
                 type="text"
                 name="username"
@@ -63,8 +62,7 @@ const BuyerSignup = ({onLogin}) => {
                 Email
               </label>
               <input
-                className="w-full px-3 py-2 bg-white/50 border border-blue-300 rounded-lg 
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="py-2 px-3 w-full rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white/50"
                 id="email"
                 type="email"
                 name="email"
@@ -73,15 +71,14 @@ const BuyerSignup = ({onLogin}) => {
                 required
               />
             </div>
-            
-              <div>
+
+            <div>
               <label className="block mb-2 text-sm font-medium text-blue-800" htmlFor="password">
                 Password
               </label>
               <div className="relative">
                 <input
-                  className="w-full px-3 py-2 bg-white/50 border border-blue-300 rounded-lg 
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="py-2 px-3 w-full rounded-lg border border-blue-300 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white/50"
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -91,7 +88,7 @@ const BuyerSignup = ({onLogin}) => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-3 flex items-center text-blue-600"
+                  className="flex absolute inset-y-0 right-3 items-center text-blue-600"
                   onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? 'Hide' : 'Show'}
@@ -109,9 +106,8 @@ const BuyerSignup = ({onLogin}) => {
               />
             </div>
             <div>
-              <button 
-                className="w-full px-4 py-2 text-white font-semibold bg-blue-600 
-                           hover:bg-blue-700 rounded-lg transition-colors duration-300"
+              <button
+                className="py-2 px-4 w-full font-semibold text-white bg-blue-600 rounded-lg transition-colors duration-300 hover:bg-blue-700"
                 type="submit"
               >
                 Sign Up
