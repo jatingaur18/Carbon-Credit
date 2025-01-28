@@ -162,8 +162,7 @@ Go to client folder
 2. Start client:
    ```
    npm start
-   ```This role excites me because it offers the chance to work on impactful projects, utilizing cutting-edge technologies while enhancing my technical skills. As someone passionate about problem-solving and building efficient software solutions, this position aligns with my career aspirations and provides an opportunity to learn from experts in the field.
-   it should start at `http://127.0.0.1:3000/`
+   ```
 
 ### References:
 - Hardhat: [https://hardhat.org/tutorial]
