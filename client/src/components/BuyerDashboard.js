@@ -2,6 +2,19 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getBuyerCredits, purchaseCredit, sellCreditApi, removeSaleCreditApi, getPurchasedCredits, generateCertificate, downloadCertificate } from '../api/api';
 import { CC_Context } from "../context/SmartContractConnector.js";
 import { ethers } from "ethers";
+import { Eye, EyeClosed, Loader2 } from 'lucide-react';
+
+const LoadingCredit = () => (
+  <li className="flex justify-between items-center py-3 pr-4 pl-3 text-sm animate-pulse">
+    <div className="flex-1">
+      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+    </div>
+    <div className="w-16">
+      <div className="h-8 bg-gray-200 rounded"></div>
+    </div>
+  </li>
+);
+
 
 
 const BuyerDashboard = () => {
@@ -9,6 +22,9 @@ const BuyerDashboard = () => {
   const [purchasedCredits, setPurchasedCredits] = useState([]);
   const [certificateData, setCertificateData] = useState(null);
   const [error, setError] = useState(null);
+  const [showCertificate, setShowCertificate] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pendingTx, setPendingTx] = useState(null);
 
   const {
     connectWallet,
@@ -25,6 +41,7 @@ const BuyerDashboard = () => {
 
   const fetchAllCredits = async () => {
     try {
+      setIsLoading(true);
       const [availableResponse, purchasedResponse] = await Promise.all([
         getBuyerCredits(),
         getPurchasedCredits()
@@ -42,6 +59,8 @@ const BuyerDashboard = () => {
     } catch (error) {
       console.error('Failed to fetch credits:', error);
       setError('Failed to fetch credits. Please try again.');
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -52,9 +71,10 @@ const BuyerDashboard = () => {
   const handleBuyCredit = async (creditId) => {
     try {
       setError(null);
-      //NOTE: the -1 is temporary
-      // const price = await getPrice();
+      setPendingTx(creditId);
+      
       const credit = await getCreditDetails(creditId );
+
       // Convert the price from wei to ether for the transaction
       const priceInEther = ethers.formatEther(credit.price);
       console.log("id, price: ", creditId , priceInEther);
@@ -64,6 +84,8 @@ const BuyerDashboard = () => {
     } catch (error) {
       console.error('Failed to purchase credit:', error);
       setError('Failed to purchase credit. Please try again.');
+    } finally{
+      setPendingTx(null);
     }
   };
 
@@ -71,12 +93,19 @@ const BuyerDashboard = () => {
     try {
       setError(null);
       const response = await generateCertificate(creditId);
+      setShowCertificate(false);
       setCertificateData(response.data);
     } catch (error) {
       console.error('Failed to generate certificate:', error);
       setError('Failed to generate certificate. Please try again.');
     }
   };
+
+  const handleHideCertificate = async() => {
+    setCertificateData(null);
+    setShowCertificate(true);
+  }
+
   const handleDownloadCertificate = async (creditId) => {
     try {
       setError(null);
@@ -158,7 +187,7 @@ const BuyerDashboard = () => {
 
 
   return (
-    <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+    <div className="overflow-hidden bg-white shadow sm:rounded-lg bg-gradient-to-br from-blue-100 to-indigo-300 ">
       <div className="py-5 px-4 sm:px-6">
         <h3 className="text-lg font-medium leading-6 text-gray-900">Buyer Dashboard</h3>
         <p className="mt-1 max-w-2xl text-sm text-gray-500">View and purchase carbon credits</p>
@@ -176,7 +205,13 @@ const BuyerDashboard = () => {
             <dt className="text-sm font-medium text-gray-500">Available Credits</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
               <ul className="rounded-md border border-gray-200 divide-y divide-gray-200">
-                {availableCredits.map((credit) => (
+                {isLoading ? (
+                  <>
+                    <LoadingCredit />
+                    <LoadingCredit />
+                    <LoadingCredit />
+                  </>
+                ) : availableCredits.map((credit) => (
                   <li key={credit.id} className="flex justify-between items-center py-3 pr-4 pl-3 text-sm">
                     <div className="flex flex-1 items-center w-0">
                       <span className="flex-1 ml-2 w-0 truncate">
@@ -187,9 +222,16 @@ const BuyerDashboard = () => {
                       <button
                         onClick={() => handleBuyCredit(credit.id)}
                         className="btn btn-secondary"
-                        disabled={credit.amount <= 0}
+                        disabled={credit.amount <= 0 || pendingTx === credit.id}
                       >
-                        {credit.amount > 0 ? 'Buy' : 'Out of Stock'}
+                        {pendingTx === credit.id ? (
+                          <span className='flex'>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Processing...
+                          </span>
+                        ) : (
+                          credit.amount > 0 ? 'Buy' : 'Out of Stock'
+                        )}
                       </button>
                     </div>
                   </li>
@@ -217,20 +259,21 @@ const BuyerDashboard = () => {
 
                       <div className="flex-shrink-0 ml-4">
                         {credit.is_expired ? (
-                          <>
+                          <div className="flex gap-4">
                             <button
-                              onClick={() => handleGenerateCertificate(credit.id)}
-                              className="btn btn-secondary"
+                              onClick={() => {showCertificate? handleGenerateCertificate(credit.id): handleHideCertificate()}}
+                              className="btn bg-sky-500"
                             >
-                              Generate Certificate
+                              {showCertificate? <Eye/> : <EyeClosed/>}
                             </button>
+                            
                             <button
                               onClick={() => handleDownloadCertificate(credit.id)}
                               className="btn btn-secondary"
                             >
-                              Download Certificate
+                              Download 
                             </button>
-                          </>
+                          </div>
                         ) : credit.is_active ? (
                           <button
                             onClick={() => handleRemoveFromSale(credit.id)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
 import { Turnstile } from '@marsidev/react-turnstile';
@@ -11,10 +11,18 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
   const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
   const [showPassword, setShowPassword] = useState(false);
+  const [loadStatus, setLoadSatus] = useState(false);
+  const [showTestPrompt, setShowTestPrompt] = useState(true); 
 
+  useEffect(() => {
+    setTimeout(() => setShowTestPrompt(false), 10000); // Auto-hide after 5 sec
+  }, []);
+
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
 
   const handleSubmit = async (e) => {
     if (!captchaToken) {
@@ -23,13 +31,16 @@ const Login = ({ onLogin }) => {
     }
     e.preventDefault();
     try {
-
+      setLoadSatus(true);
       const response = await login({ ...formData, 'cf-turnstile-response': captchaToken });
       localStorage.setItem('token', response.data.access_token);
+
       const userRole = response.data.role;
       onLogin({ username: formData.username, role: userRole });
+
       navigate(userRole === 'admin' ? '/admin-dashboard' : '/buyer-dashboard');
     } catch (error) {
+      setLoadSatus(false);
       if (error.status === 401) {
         setStatus(error?.response?.data?.message)
         setInterval(() => setStatus(null), 3000)
@@ -48,6 +59,30 @@ const Login = ({ onLogin }) => {
         {status && (
           <div className="flex fixed top-5 left-1/2 items-center py-2 px-4 text-white bg-red-500 rounded-lg shadow-lg transition-transform duration-300 transform -translate-x-1/2 animate-slideIn">
             <span>{status}</span>
+          </div>
+        )}
+
+        {showTestPrompt && (
+          <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-white shadow-lg p-4 rounded-lg flex items-center gap-4">
+            <span>Login as:</span>
+            <button
+              className="px-3 py-1 bg-cyan-800 text-white rounded-md"
+              onClick={() => {
+                setFormData({ username: "test_buyer", password: "sepolia", role: "buyer" });
+                setShowTestPrompt(false);
+              }}
+            >
+              Test Buyer
+            </button>
+            <button
+              className="px-3 py-1 bg-emerald-600 text-white rounded-md"
+              onClick={() => {
+                setFormData({ username: "test_admin", password: "sepolia", role: "admin" });
+                setShowTestPrompt(false);
+              }}
+            >
+              Test Admin
+            </button>
           </div>
         )}
 
@@ -123,7 +158,7 @@ const Login = ({ onLogin }) => {
                   className="py-2 px-4 w-full font-semibold text-white bg-emerald-600 rounded-lg transition-colors duration-300 hover:bg-emerald-700"
                   type="submit"
                 >
-                  Sign In
+                  {loadStatus? "Loading...": "Log In" }
                 </button>
               </div>
             </form>
