@@ -1,7 +1,7 @@
 import React from 'react';
-import { Globe, Lock, ShieldCheck } from 'lucide-react';
+import { Globe, Lock, ShieldCheck, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+
 
 const Home = () => {
 
@@ -37,9 +37,14 @@ const Home = () => {
                 {logged? 'Dashboard': 'Login'}
                 </button>
             </Link>
-            <a href='https://github.com/devansh-srv/Carbon-Credit'>
+            <a href='https://www.rogueone.us/projects/carbon-credits/' target='_blank'>
             <button className="border-2 border-emerald-600 text-emerald-700 px-6 py-3 rounded-full hover:bg-emerald-50 transition">
-              GitHub
+              Learn More
+            </button>
+            </a>
+            <a href='https://github.com/devansh-srv/Carbon-Credit/' target='_blank'>
+            <button className="border-2 border-emerald-600 text-emerald-700 px-6 py-3 rounded-full hover:bg-emerald-50 transition">
+              <Github/>
             </button>
             </a>
           </div>

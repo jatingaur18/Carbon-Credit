@@ -10,6 +10,7 @@ const AdminSignup = ({ onLogin }) => {
   const [status, setStatus] = useState(null)
   const [color, setColor] = useState(null)
   const [showPassword, setShowPassword] = useState(false);
+  const [loadStatus, setLoadSatus] = useState(false);
   const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
   const navigate = useNavigate();
 
@@ -24,7 +25,8 @@ const AdminSignup = ({ onLogin }) => {
     }
     e.preventDefault();
     try {
-      console.log("FormData:", formData);
+      // console.log("FormData:", formData);
+      setLoadSatus(true);
       const signupResponse = await signup({ ...formData, role: 'admin', 'cf-turnstile-response': captchaToken });
 
       setStatus(signupResponse.data.message)
@@ -42,12 +44,14 @@ const AdminSignup = ({ onLogin }) => {
       navigate('/admin-dashboard');
 
     } catch (error) {
+      setLoadSatus(false);
       if (error.status === 400) {
         alert(error?.response?.data?.message)
       } else {
         console.error('Signup failed:', error);
         setStatus('Signup Failed. Please Try Again')
         setColor('bg-red-500')
+        
         setInterval(() => {
           setStatus(null)
           setColor(null)
@@ -137,7 +141,7 @@ const AdminSignup = ({ onLogin }) => {
                 className="py-2 px-4 w-full font-semibold text-white bg-emerald-700 rounded-lg transition-colors duration-300 hover:bg-emerald-800"
                 type="submit"
               >
-                Sign Up
+                {loadStatus? "Loading...": "Sign Up" }
               </button>
             </div>
           </form>

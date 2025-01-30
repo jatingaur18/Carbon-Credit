@@ -35,6 +35,10 @@ const Navbar = ({ user, onLogout }) => {
             </Link>
           </>
         )}
+        {user && 
+        <span className="bg-gradient-to-r from-emerald-600 to-teal-500 text-transparent bg-clip-text font-semibold text-lg">
+        Hi, {user.username}!
+      </span>}
         {user && user.role === 'admin' && (
           <Link
             to="/admin-dashboard"
