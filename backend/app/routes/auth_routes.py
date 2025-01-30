@@ -27,7 +27,7 @@ def signup():
     new_user = User(username=data['username'], email=data['email'], password=hashed_password, role=data['role'])
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "User created successfully"}), 201
+    return jsonify({"message": f"{data['role']} created successfully"}), 201
 
 @auth_bp.route('/api/login', methods=['POST'])
 def login():

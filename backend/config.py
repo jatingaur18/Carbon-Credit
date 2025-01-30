@@ -10,6 +10,10 @@ class Config:
         'POSTGRES_URI',
         'postgresql://postgres:postgres@localhost:5432/local_database'  # Default fallback
     )
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_recycle": 240,  # Recycle connections before Neon shuts down
+        "pool_pre_ping": True,  # Check connection status before queries
+    }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = 'your-secret-key'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
