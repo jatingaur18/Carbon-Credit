@@ -13,7 +13,7 @@ The contract deployed at address `0x5E5D1D1Dc0EDDB4f9e9E05FD872642Cd78F6eF51` on
 To get started use test credentials:
 - **username:** `test_buyer`
 - **password:** `sepolia`
-
+(You will require Sepolia account to use credits)
 Or ssee the demo [here](#demo).
 
 ## Introduction and Motivation
@@ -49,7 +49,7 @@ It later evolved into voluntary markets and cap-and-trade systems, allowing comp
 
 
 ## Demo
-https://github.com/user-attachments/assets/91819c9c-db4c-48b8-a065-31542ac41313
+[![Watch the video](https://img.youtube.com/vi/_5tFXJQIzi4/0.jpg)](https://www.youtube.com/watch?v=_5tFXJQIzi4)
 
 
 
