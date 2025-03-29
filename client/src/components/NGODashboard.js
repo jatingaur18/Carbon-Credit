@@ -38,6 +38,7 @@ const NGODashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCredit, setSelectedCredit] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isFileConfirmed, setIsFileConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [pendingCr, setPendingCr] = useState(false);
   const [pendingTx, setPendingTx] = useState(null);
@@ -231,32 +232,7 @@ const NGODashboard = () => {
     const file = acceptedFiles[0];
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', 'CARBON')
-      try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_NAME}/upload`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await response.json();
-        console.log('File uploaded to Cloudinary: ', data);
-        Swal.fire({
-          icon: "success",
-          title: "File Uploaded",
-          text: "Your file has been uploaded successfully.",
-        });
-      }
-      catch (err) {
-        console.error('Failed uploading file to cloudinary: ', err);
-        Swal.fire(
-          {
-            icon: "error",
-            title: "Upload failed",
-            text: "There was an error uploading your file. Please try again.",
-          }
-        )
-      }
+      setIsFileConfirmed(false);
     } else {
       Swal.fire({
         icon: "warning",
@@ -265,13 +241,43 @@ const NGODashboard = () => {
       });
     }
   };
+  const onSubmit = async () => {
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('upload_preset', 'CARBON')
+    try {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_NAME}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      console.log('File uploaded to Cloudinary: ', data);
+      Swal.fire({
+        icon: "success",
+        title: "File Uploaded",
+        text: "Your file has been uploaded successfully.",
+      });
+      setIsFileConfirmed(true)
+    }
+    catch (err) {
+      console.error('Failed uploading file to cloudinary: ', err);
+      Swal.fire(
+        {
+          icon: "error",
+          title: "Upload failed",
+          text: "There was an error uploading your file. Please try again.",
+        }
+      )
+    }
+  }
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: "application/pdf",
     maxFiles: 1,
-    noClick: false,
-    noKeyboard: false,
+    noClick: true,
+    noKeyboard: true,
   });
 
   return (
@@ -313,6 +319,49 @@ const NGODashboard = () => {
                   onChange={handleInputChange}
                   required
                 />
+                <div className="py-5 px-4 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt className="text-sm font-medium text-gray-500">Upload Project PDF</dt>
+                  <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                    <div {...getRootProps()} className="p-6 text-center border-2 border-gray-400 border-dashed">
+                      <input {...getInputProps()} />
+                      {isDragActive ? (
+                        <p>Drop the files here ...</p>
+                      ) : selectedFile ? (
+                        <>
+                          <p>Selected file: {selectedFile.name}</p>
+                          {isFileConfirmed ? (
+                            <p>File has been uploaded successfully.</p>
+                          ) : (
+                            <>
+                              <button
+                                type='button'
+                                onClick={onSubmit}
+                                className="py-2 px-4 font-sans text-white bg-green-500 rounded hover:bg-green-400">
+                                Confirm Upload
+                              </button>
+                              <button
+                                type='button'
+                                onClick={open}
+                                className="py-2 px-4 ml-2 font-sans text-black bg-blue-400 rounded hover:bg-gray-100">
+                                Upload another file
+                              </button>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <p>Drag 'n' drop a PDF file here, or click to select one</p>
+                          <button
+                            type='button'
+                            onClick={open}
+                            className="py-2 px-4 font-sans text-black bg-blue-400 rounded hover:bg-gray-100">
+                            Upload Project File
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </dd>
+                </div>
                 <button type="submit" className="btn btn-primary">{pendingCr ? <span className='flex'>
                   <Loader2 className="mr-2 w-4 h-4 animate-spin" />
                   Generating Credit...
@@ -386,25 +435,6 @@ const NGODashboard = () => {
         </dd>
       </div>
 
-      <div className="py-5 px-4 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt className="text-sm font-medium text-gray-500">Upload Project PDF</dt>
-        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-          <div {...getRootProps()} className="p-6 text-center border-2 border-gray-400 border-dashed">
-            <input {...getInputProps()} />
-            {
-              isDragActive ? (
-                <>
-                  <p>Drop the files here ...</p>
-                </>) : (
-                <>
-                  <p>Drag 'n' drop a PDF file here, or click to select one</p>
-                  <button type='button' onClick={open} className="py-2 px-4 font-sans text-black bg-gray-200 rounded hover:bg-gray-100">Upload Project File</button>
-                </>
-              )
-            }
-          </div>
-        </dd>
-      </div>
 
       {modalVisible && (
         <div className="flex fixed inset-0 z-50 justify-center items-center bg-gray-800 bg-opacity-75">
