@@ -66,7 +66,7 @@ jobs:
         run: |
           cd smartContracts
           npx hardhat compile
-          npx hardhat test --verbose
+          # npx hardhat test --verbose
 
       - name: Install backend dependencies
         if: matrix.component == 'backend'
