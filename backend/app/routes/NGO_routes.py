@@ -4,6 +4,7 @@ from app import db, bcrypt
 from app.models.credit import Credit
 from app.models.transaction import PurchasedCredit, Transactions
 from app.models.user import User
+import random
 import json
 NGO_bp = Blueprint('NGO', __name__)
 def get_current_user():
@@ -11,6 +12,10 @@ def get_current_user():
         return json.loads(get_jwt_identity())
     except json.JSONDecodeError:
         return None
+
+def numberOfAuditors(k) -> int:
+    return int((k//500)*2 + 3)
+
 @NGO_bp.route('/api/NGO/credits', methods=['GET', 'POST'])
 @jwt_required()
 
@@ -38,6 +43,15 @@ def manage_credits():
 
     # Allow the NGO to create new credits
     if request.method == 'POST':
+        auditors = User.query.filter_by(role = 'auditor').all()
+        auditor_ids = [auditor.id for auditor in auditors]
+        k = numberOfAuditors(int(data['amount']))
+        try:
+            selected_auditor_ids = random.sample(auditor_ids, k)
+        except ValueError:
+            return jsonify({"message": "Not enough auditors"}), 413
+        
+        #do something regarding the amount 
         data = request.json
         new_credit = Credit(
             id=data['creditId'],
@@ -45,7 +59,9 @@ def manage_credits():
             amount=data['amount'], 
             price=data['price'], 
             creator_id=user.id,
-            docu_url = data['secure_url'] 
+            docu_url = data['secure_url'],
+            auditors = selected_auditor_ids
+            
         )
         db.session.add(new_credit)
         db.session.commit()
