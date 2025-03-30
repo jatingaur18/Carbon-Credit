@@ -35,7 +35,7 @@ const AuditorSignup = ({ onLogin }) => {
         setStatus(null)
         setColor(null)
       }, 3000)
-      const loginResponse = await login({ ...formData, role: 'auditor', 'cf-turnstile-response': captchaToken });
+      const loginResponse = await login({ ...formData, role: 'auditor' });
 
       localStorage.setItem("token", loginResponse.data.access_token);
 

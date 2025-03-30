@@ -33,14 +33,14 @@ def signup():
 def login():
     data = request.json
     #
-    captcha_response = data.get('cf-turnstile-response')
-    captcha_verify = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify',
-                                   data={
-                                   'secret': SECRET_KEY,
-                                   'response': captcha_response,
-                                   }).json()
-    if not captcha_verify.get('success'):
-        return jsonify({"message":"CAPTCHA failed"}),400
+    # captcha_response = data.get('cf-turnstile-response')
+    # captcha_verify = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify',
+    #                                data={
+    #                                'secret': SECRET_KEY,
+    #                                'response': captcha_response,
+    #                                }).json()
+    # if not captcha_verify.get('success'):
+    #     return jsonify({"message":"CAPTCHA failed"}),400
     
     user = User.query.filter_by(username=data['username']).first()
 

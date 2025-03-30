@@ -6,7 +6,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({ username: '', password: '', role: 'buyer' });
-  const [captchaToken, setCaptchaToken] = useState('');
+  // const [captchaToken, setCaptchaToken] = useState('');
   const [status, setStatus] = useState(null)
   const navigate = useNavigate();
   const SITE_KEY = process.env.REACT_APP_SITE_KEY || '1x00000000000000000000AA';
@@ -25,14 +25,14 @@ const Login = ({ onLogin }) => {
 
 
   const handleSubmit = async (e) => {
-    if (!captchaToken) {
-      alert('Please complete the CAPTCHA.');
-      return;
-    }
+    // if (!captchaToken) {
+    //   alert('Please complete the CAPTCHA.');
+    //   return;
+    // }
     e.preventDefault();
     try {
       setLoadStatus(true);
-      const response = await login({ ...formData, 'cf-turnstile-response': captchaToken });
+      const response = await login({ ...formData });
       localStorage.setItem('token', response.data.access_token);
 
       const userRole = response.data.role;
@@ -145,16 +145,16 @@ const Login = ({ onLogin }) => {
                   <option value="auditor">Auditor</option>
                 </select>
               </div>
-              <div>
-                <Turnstile
-                  options={{
-                    theme: 'light',
-                  }}
-                  siteKey={SITE_KEY}
-                  onError={() => alert('CAPTCHA failed Try again')}
-                  onSuccess={(token) => setCaptchaToken(token)}
-                />
-              </div>
+              {/* <div> */}
+              {/*   <Turnstile */}
+              {/*     options={{ */}
+              {/*       theme: 'light', */}
+              {/*     }} */}
+              {/*     siteKey={SITE_KEY} */}
+              {/*     onError={() => alert('CAPTCHA failed Try again')} */}
+              {/*     onSuccess={(token) => setCaptchaToken(token)} */}
+              {/*   /> */}
+              {/* </div> */}
               <div>
                 <button
                   className="py-2 px-4 w-full font-semibold text-white bg-emerald-600 rounded-lg transition-colors duration-300 hover:bg-emerald-700"

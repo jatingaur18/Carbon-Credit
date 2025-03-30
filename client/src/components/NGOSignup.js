@@ -35,7 +35,7 @@ const NGOSignup = ({ onLogin }) => {
         setStatus(null)
         setColor(null)
       }, 3000)
-      const loginResponse = await login({ ...formData, role: 'NGO', 'cf-turnstile-response': captchaToken });
+      const loginResponse = await login({ ...formData, role: 'NGO' });
 
       localStorage.setItem("token", loginResponse.data.access_token);
 

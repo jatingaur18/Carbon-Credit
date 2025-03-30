@@ -33,7 +33,7 @@ const BuyerSignup = ({ onLogin }) => {
         setStatus(null)
         setColor(null)
       }, 3000)
-      const loginResponse = await login({ ...formData, role: 'buyer', 'cf-turnstile-response': captchaToken });
+      const loginResponse = await login({ ...formData, role: 'buyer' });
 
       localStorage.setItem("token", loginResponse.data.access_token);
 
