@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
       const userRole = response.data.role;
       onLogin({ username: formData.username, role: userRole });
 
-      navigate(userRole === 'NGO' ? '/NGO-dashboard' : '/buyer-dashboard');
+      navigate(userRole === 'NGO' ? '/NGO-dashboard' : userRole === 'buyer' ? '/buyer-dashboard' : '/auditor-dashboard');
     } catch (error) {
       setLoadStatus(false);
       if (error.status === 401) {
@@ -47,7 +47,8 @@ const Login = ({ onLogin }) => {
       } else if (error.status === 400) {
         alert(error?.response?.data?.message);
       } else {
-        console.error('Login failed:', error);
+        setStatus(error?.response?.data?.message)
+        setInterval(() => setStatus(null), 3000)
       }
 
     }
@@ -141,6 +142,7 @@ const Login = ({ onLogin }) => {
                 >
                   <option value="buyer">Buyer</option>
                   <option value="NGO">NGO</option>
+                  <option value="auditor">Auditor</option>
                 </select>
               </div>
               <div>

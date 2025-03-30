@@ -27,7 +27,7 @@ const AuditorSignup = ({ onLogin }) => {
     try {
       // console.log("FormData:", formData);
       setLoadStatus(true);
-      const signupResponse = await signup({ ...formData, role: 'Auditor', 'cf-turnstile-response': captchaToken });
+      const signupResponse = await signup({ ...formData, role: 'auditor', 'cf-turnstile-response': captchaToken });
 
       setStatus(signupResponse.data.message)
       setColor('bg-emerald-700')
@@ -35,11 +35,11 @@ const AuditorSignup = ({ onLogin }) => {
         setStatus(null)
         setColor(null)
       }, 3000)
-      const loginResponse = await login({ ...formData, role: 'Auditor', 'cf-turnstile-response': captchaToken });
+      const loginResponse = await login({ ...formData, role: 'auditor', 'cf-turnstile-response': captchaToken });
 
       localStorage.setItem("token", loginResponse.data.access_token);
 
-      onLogin({ username: formData.username, role: 'Auditor' });
+      onLogin({ username: formData.username, role: 'auditor' });
 
       navigate('/auditor-dashboard');
     } catch (error) {

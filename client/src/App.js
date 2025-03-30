@@ -53,7 +53,7 @@ const App = () => {
           // console.log(currentPath);
           // navigate(currentPath);
           if (window.location.pathname === '/' || window.location.pathname === '/login') {
-            navigate(parsedSub.role.toLowerCase() === 'ngo' ? '/NGO-dashboard' : parsedSub.role.toLowerCase() === 'auditor' ? '/auditor-dashboard' : '/buyer-dashboard');
+            navigate(parsedSub.role === 'NGO' ? '/NGO-dashboard' : parsedSub.role === 'auditor' ? '/auditor-dashboard' : '/buyer-dashboard');
           }
 
         }
