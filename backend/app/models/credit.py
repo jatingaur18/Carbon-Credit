@@ -1,6 +1,7 @@
 from app import db
 from app.models.user import User
-from app.models.association import AuditorAssociation
+from sqlalchemy.dialects.postgresql import ARRAY
+# from app.models.association import AuditorAssociation
 
 class Credit(db.Model):
     __tablename__ = 'credits'
@@ -11,6 +12,6 @@ class Credit(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     is_expired = db.Column(db.Boolean, default=False)
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, unique=True)
-    docu_url = db.Column(db.String(200))    
-    auditors = db.relationship('User', secondary='auditor_association', backref='audited_credits')
+    docu_url = db.Column(db.String(200))
+    auditors = db.Column(ARRAY(db.INTEGER))
     creator = db.relationship('User', backref='credits')

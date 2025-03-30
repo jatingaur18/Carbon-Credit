@@ -23,11 +23,13 @@ def create_app():
     from .routes.auth_routes import auth_bp
     from .routes.NGO_routes import NGO_bp
     from .routes.buyer_routes import buyer_bp
+    from .routes.auditor_routes import auditor_bp
     from .routes.health_routes import health_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(NGO_bp)
     app.register_blueprint(buyer_bp)
+    app.register_blueprint(auditor_bp)
     app.register_blueprint(health_bp)
     
     with app.app_context():
