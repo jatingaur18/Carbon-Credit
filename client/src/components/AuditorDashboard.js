@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getAssignedCredits } from '../api/api';
+import { getAssignedCredits, auditCreditApi } from '../api/api';
 import { CC_Context } from "../context/SmartContractConnector.js";
 
 const LoadingCredit = () => (
@@ -46,7 +46,14 @@ const AuditorDashboard = () => {
     try {
       console.log("Accepting credit id:", creditId);
       await auditCredit(creditId, true);
+      
+      console.log("sending to backend");
+      const auditData = {creditId: creditId, vote: true };
+      const response = await auditCreditApi(auditData);
+      console.log("backend audit response: ",response);
+
       setAuditCreditId(null);
+      window.location.reload();
     } catch (error) {
       console.error("Error in audit:", error);
       throw error;
@@ -57,7 +64,14 @@ const AuditorDashboard = () => {
     try {
       console.log("Rejecting credit id:", creditId);
       await auditCredit(creditId, false);
+
+      console.log("sending to backend");
+      const auditData = {creditId: creditId, vote: false };
+      const response = await auditCreditApi(auditData);
+      console.log("backend audit response: ",response);
+
       setAuditCreditId(null);
+      window.location.reload();
     } catch (error) {
       console.error("Error in audit:", error);
       throw error;
