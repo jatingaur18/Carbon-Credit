@@ -46,7 +46,7 @@ def audit_credit(credit_id):
     
     data = request.json
 
-    print(data)
+    
     print("credit id", credit_id)
     user = User.query.filter_by(username=current_user.get('username')).first()
     request_obj = Request.query.filter_by(credit_id=credit_id).first()
@@ -62,7 +62,7 @@ def audit_credit(credit_id):
     else:
         request_obj.score -= 1
 
-    print("going to remove:",user.id)
+    
     # Remove auditor
     request_obj.auditors.remove(user.id)
     db.session.commit()

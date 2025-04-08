@@ -90,10 +90,10 @@ const NGODashboard = () => {
 
       console.log("Payload size:", JSON.stringify(updatedCredit).length);
       
-      console.log("lalalala");
+      
       const response = await createNGOCredit(updatedCredit);
       console.log('response: ', response)
-      console.log("lololo 2");
+      
 
       // Refetch the updated credit list after successful creation
       const updatedCredits = await getNGOCredits();
