@@ -54,8 +54,6 @@ def audit_credit(credit_id):
     if not request_obj or user.id not in request_obj.auditors:
         return jsonify({"message": "Not assigned or already audited"}), 404
 
-    if 'vote' not in data:
-        return jsonify({"message": "no vote provided!"}), 400
     
     if(data['vote']):
         request_obj.score += 1

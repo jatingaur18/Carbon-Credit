@@ -53,7 +53,7 @@ const AuditorDashboard = () => {
       console.log("backend audit response: ",response);
 
       setAuditCreditId(null);
-      window.location.reload();
+      setAssignedCredits((prevCredits) => prevCredits.filter((credit) => credit.id !== creditId));
     } catch (error) {
       console.error("Error in audit:", error);
       throw error;
@@ -71,7 +71,7 @@ const AuditorDashboard = () => {
       console.log("backend audit response: ",response);
 
       setAuditCreditId(null);
-      window.location.reload();
+      setAssignedCredits((prevCredits) => prevCredits.filter((credit) => credit.id !== creditId));
     } catch (error) {
       console.error("Error in audit:", error);
       throw error;

@@ -56,7 +56,7 @@ def manage_credits():
         try:
             selected_auditor_ids = random.sample(auditor_ids, k)
         except ValueError:
-            return jsonify({"message": "Not enough auditors"}), 400
+            return jsonify({"message": "Not enough auditors"}), 503
         
         new_credit = Credit(
             id=data['creditId'],
