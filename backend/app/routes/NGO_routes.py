@@ -2,10 +2,12 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db, bcrypt
 from app.models.credit import Credit
+from app.models.request import Request
 from app.models.transaction import PurchasedCredit, Transactions
 from app.models.user import User
 import random
 import json
+
 NGO_bp = Blueprint('NGO', __name__)
 def get_current_user():
     try:
@@ -54,7 +56,7 @@ def manage_credits():
         try:
             selected_auditor_ids = random.sample(auditor_ids, k)
         except ValueError:
-            return jsonify({"message": "Not enough auditors"}), 413
+            return jsonify({"message": "Not enough auditors"}), 503
         
         new_credit = Credit(
             id=data['creditId'],
@@ -67,6 +69,15 @@ def manage_credits():
             req_status = 1
         )
         db.session.add(new_credit)
+
+        new_request = Request(
+            credit_id=data['creditId'],
+            creator_id=user.id,
+            auditors=selected_auditor_ids
+        )
+        db.session.add(new_request)
+
+        
         db.session.commit()
         return jsonify({"message": "Credit created successfully"}), 201
 

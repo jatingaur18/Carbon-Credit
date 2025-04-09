@@ -88,16 +88,20 @@ const NGODashboard = () => {
       await generateCredit(updatedCredit.amount, updatedCredit.price); // Use updated credit here
       await requestAudit(newCreditId, updatedCredit.auditFees);
 
+      console.log("Payload size:", JSON.stringify(updatedCredit).length);
+      
+      
       const response = await createNGOCredit(updatedCredit);
       console.log('response: ', response)
+      
 
       // Refetch the updated credit list after successful creation
       const updatedCredits = await getNGOCredits();
       setMyCredits(updatedCredits.data);
 
-      setNewCredit({ name: "", amount: 0, price: 0, creditId: 0 });
+      setNewCredit({ name: "", amount: "", price: "", creditId: "", auditFees: '', secure_url: '' });
     } catch (error) {
-      console.error("Failed to create credit:", error);
+      console.error("Failed to create credit:", error.response?.data?.message || error);
     } finally {
       setPendingCr(false);
     }
