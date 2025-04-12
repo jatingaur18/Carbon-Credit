@@ -20,8 +20,6 @@ def numberOfAuditors(k) -> int:
 
 @NGO_bp.route('/api/NGO/credits', methods=['GET', 'POST'])
 @jwt_required()
-
-
 def manage_credits():
     current_user = get_current_user()
     if current_user.get('role') != 'NGO':
@@ -31,17 +29,25 @@ def manage_credits():
 
     # Ensure only credits created by this NGO are visible
     if request.method == 'GET':
-        credits = Credit.query.filter_by(creator_id=user.id).all()
-        return jsonify([{
-            "id": c.id,
-            "name": c.name,
-            "amount": c.amount,
-            "price": c.price,
-            "is_active": c.is_active,
-            "is_expired": c.is_expired,
-            "creator_id": c.creator_id,
-            "secure_url": c.docu_url,
-        } for c in credits]), 200
+        credits = Credit.query.filter_by(creator_id=user.id).order_by(Credit.id.asc()).all()
+        data = []
+        for c in credits:
+            req = Request.query.filter_by(credit_id=c.id).first()
+            data.append({
+                "id": c.id,
+                "name": c.name,
+                "amount": c.amount,
+                "price": c.price,
+                "is_active": c.is_active,
+                "is_expired": c.is_expired,
+                "creator_id": c.creator_id,
+                "secure_url": c.docu_url,
+                "req_status": c.req_status,
+                "auditors_count": len(c.auditors),
+                "auditor_left": len(req.auditors) if req and req.auditors else 0,
+                "score": req.score if req else 0
+            })
+        return jsonify(data), 200
 
     # Allow the NGO to create new credits
     if request.method == 'POST':
@@ -131,7 +137,7 @@ def get_transactions():
 
 @NGO_bp.route('/api/NGO/expire-req', methods=['POST'])
 @jwt_required()
-def check_request():
+def check_expire_request():
     data = request.json
 
     current_user = get_current_user()
@@ -149,3 +155,26 @@ def check_request():
     if bcrypt.check_password_hash(user.password, data['password']):
         return jsonify({"message": "User verified succesfully! can proceed to expire credit"}), 200
     return jsonify({"message": "Invalid credentials"}), 401
+
+@NGO_bp.route('/api/NGO/audit-req', methods=['GET'])
+@jwt_required()
+def check_audit_request():
+    auditors = User.query.filter_by(role = 'auditor').all()
+    num_auditors = len(auditors)
+    print("auditors avail:",num_auditors)
+
+    carbon_amount = request.args.get('amount')
+    if not carbon_amount:
+        return jsonify({"message": "Missing 'amount' parameter"}), 400
+
+    try:
+        carbon_amount = int(carbon_amount)
+    except ValueError:
+        return jsonify({"message": "'amount' must be an integer"}), 400
+    
+    req_auditors = numberOfAuditors(int(carbon_amount))
+
+    if num_auditors < req_auditors:
+        return jsonify({"message": f"Not Enough Auditors for {carbon_amount} tons of carbon. Maybe split the credit !"}), 500
+    
+    return jsonify({"message": f"Enough auditors for the credit"}), 200

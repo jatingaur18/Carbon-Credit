@@ -2,7 +2,27 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getBuyerCredits, purchaseCredit, sellCreditApi, removeSaleCreditApi, getPurchasedCredits, generateCertificate, downloadCertificate } from '../api/api';
 import { CC_Context } from "../context/SmartContractConnector.js";
 import { ethers } from "ethers";
-import { Eye, EyeClosed, Loader2 } from 'lucide-react';
+import { Eye, EyeClosed, Loader2, File, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
+// Modular Details Button Component
+const DetailsButton = ({ creditId }) => {
+  const navigate = useNavigate();
+  
+  const handleViewDetails = () => {
+    navigate(`/credits/${creditId}`);
+  };
+  
+  return (
+    <button
+      onClick={handleViewDetails}
+      className="p-2 text-white bg-indigo-500 rounded-xl hover:bg-indigo-600 flex items-center justify-center"
+    >
+      <Info size={16} />
+    </button>
+  );
+};
 
 const LoadingCredit = () => (
   <li className="flex justify-between items-center py-3 pr-4 pl-3 text-sm animate-pulse">
@@ -14,8 +34,6 @@ const LoadingCredit = () => (
     </div>
   </li>
 );
-
-
 
 const BuyerDashboard = () => {
   const [availableCredits, setAvailableCredits] = useState([]);
@@ -72,15 +90,17 @@ const BuyerDashboard = () => {
     try {
       setError(null);
       setPendingTx(creditId);
-
+  
       const credit = await getCreditDetails(creditId);
-
-      // Convert the price from wei to ether for the transaction
       const priceInEther = ethers.formatEther(credit.price);
+  
       console.log("id, price: ", creditId, priceInEther);
-      await buyCredit(creditId, priceInEther);
-      await purchaseCredit({ credit_id: creditId, amount: 1 });
-      await fetchAllCredits(); // Refresh both available and purchased credits
+  
+      const receipt = await buyCredit(creditId, priceInEther);
+      // console.log(receipt);
+      await purchaseCredit({ credit_id: creditId, txn_hash: receipt.hash });
+  
+      await fetchAllCredits();
     } catch (error) {
       console.error('Failed to purchase credit:', error);
       setError('Failed to purchase credit. Please try again.');
@@ -88,7 +108,7 @@ const BuyerDashboard = () => {
       setPendingTx(null);
     }
   };
-
+  
   const handleGenerateCertificate = async (creditId) => {
     try {
       setError(null);
@@ -122,7 +142,7 @@ const BuyerDashboard = () => {
       setError('Failed to download certificate. Please try again.');
     }
   }
-  ///The code from here till return might be a little sketchy cause i dont know how it works mf
+  
   const handleSellInput = (creditId) => {
     setPurchasedCredits((prevCredits) =>
       prevCredits.map((credit) =>
@@ -160,9 +180,9 @@ const BuyerDashboard = () => {
     } catch (error) {
       console.error("Can't sale credit: ", error);
       setError('Failed to sell credit');
+      handleSellError();
+      await fetchAllCredits();
     }
-
-
   };
 
   const handleRemoveFromSale = async (creditId) => {
@@ -181,10 +201,18 @@ const BuyerDashboard = () => {
     } catch (error) {
       console.error("We shouldnt be getting error here T:T : ", error);
       setError('Failed to remove credit');
+      handleSellError();
+      await fetchAllCredits();
     }
-
   };
 
+  const handleSellError = () => {
+      Swal.fire({
+              icon: 'error',
+              title: 'Error !',
+              html: 'Possible Reasons:<br><br>1. Check MetaMask account is the one you bought with'
+            });
+    }
 
   return (
     <div className="overflow-hidden bg-white bg-gradient-to-br from-blue-100 to-indigo-300 shadow sm:rounded-lg">
@@ -215,31 +243,36 @@ const BuyerDashboard = () => {
                   <li key={credit.id} className="flex justify-between items-center py-3 pr-4 pl-3 text-sm">
                     <div className="flex flex-1 items-center w-0">
                       <span className="flex-1 ml-2 w-0 truncate">
-                        {credit.name} - Amount: {credit.amount}, Price: ${credit.price}
+                        {credit.name} - Amount: {credit.amount}, Price: {credit.price} ETH
                       </span>
                     </div>
-                    <div className="flex-shrink-0 ml-4">
-                      <>
+                    <div className="flex-shrink-0 ml-4 flex items-center space-x-2">
+                      {/* Details button - added here */}
+                      <DetailsButton creditId={credit.id} />
+                      
+                      {credit.secure_url && (
                         <button
-                          type='button'
+                          type="button"
                           onClick={() => window.open(credit.secure_url, '_blank')}
-                          className="py-2 px-4 mr-4 font-sans text-white bg-blue-500 rounded hover:bg-blue-800">
-                          View Project Documents
-                        </button>
-                        <button
-                          onClick={() => handleBuyCredit(credit.id)}
-                          className="btn btn-secondary"
-                          disabled={credit.amount <= 0 || pendingTx === credit.id}
+                          className="py-2 px-2 text-white bg-blue-500 rounded hover:bg-blue-800"
                         >
-                          {pendingTx === credit.id ? (
-                            <span className='flex'>
-                              <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                              Processing...
-                            </span>
-                          ) : (
-                            credit.amount > 0 ? 'Buy' : 'Out of Stock'
-                          )}
-                        </button></>
+                          <File size={20} />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleBuyCredit(credit.id)}
+                        className="btn btn-secondary"
+                        disabled={credit.amount <= 0 || pendingTx === credit.id}
+                      >
+                        {pendingTx === credit.id ? (
+                          <span className="flex items-center">
+                            <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                            Processing...
+                          </span>
+                        ) : (
+                          credit.amount > 0 ? 'Buy' : 'Out of Stock'
+                        )}
+                      </button>
                     </div>
                   </li>
                 ))}
@@ -255,16 +288,18 @@ const BuyerDashboard = () => {
                   {purchasedCredits.map((credit) => (
                     <li
                       key={credit.id}
-                      className={`pl-3 pr-4 py-3 flex items-center justify-between text-sm ${credit.is_expired ? 'bg-[#D4EDDA]' : ''
-                        }`}
+                      className={`pl-3 pr-4 py-3 flex items-center justify-between text-sm ${credit.is_expired ? 'bg-[#D4EDDA]' : ''}`}
                     >
                       <div className="flex flex-1 items-center w-0">
                         <span className="flex-1 ml-2 w-0 truncate">
-                          {credit.name} - Amount: {credit.amount}, Price: ${credit.price}
+                          {credit.name} - Amount: {credit.amount}, Price: {credit.price} ETH
                         </span>
                       </div>
 
                       <div className="flex flex-shrink-0 gap-2 items-center ml-4">
+                        {/* Details button - added here */}
+                        <DetailsButton creditId={credit.id} />
+                        
                         {/* View Project Documents button - aligned left */}
                         {credit.secure_url && (
                           <button
@@ -326,7 +361,6 @@ const BuyerDashboard = () => {
                                   You will get 90% of value, the other 10% will go to creator
                                 </p>
                               </div>
-                              //text here 
                             )}
                           </div>
                         )}
@@ -337,9 +371,6 @@ const BuyerDashboard = () => {
               ) : (
                 <p>No credits purchased yet.</p>
               )}
-
-
-
             </dd>
           </div>
 
@@ -356,7 +387,6 @@ const BuyerDashboard = () => {
           )}
         </dl>
       </div>
-
     </div>
   );
 };

@@ -34,6 +34,9 @@ def purchase_credit():
     data = request.json
     if not data or 'credit_id' not in data:
         return jsonify({"message": "Missing credit_id"}), 400
+    
+    if 'txn_hash' not in data:
+        return jsonify({"message": "Missing txn_hash"}), 400
 
     # Retrieve the credit
     credit = Credit.query.get(data['credit_id'])
@@ -55,7 +58,8 @@ def purchase_credit():
         user_id=user.id,
         credit_id=credit.id,
         amount=credit.amount,
-        creator_id=credit.creator_id
+        creator_id=credit.creator_id,
+        txn_hash=data['txn_hash']
     )
 
     # Record the transaction
@@ -95,6 +99,10 @@ def sell_credit():
     if credit:
         credit.is_active = True
         credit.price = data['salePrice']
+
+        if(credit.req_status != 3):
+            credit.req_status = 3
+            
         db.session.commit()
 
         return jsonify({"message": f"Credit put to sale with price {data['salePrice']}" }), 200
@@ -209,3 +217,33 @@ def download_certificate(creditId):
         "filename":f"Carbon_Credit_Certificate_{purchased_credit.id}.pdf",
         "pdf_base64":base64.b64encode(output_buffer.getvalue()).decode('utf-8')
     })
+
+@buyer_bp.route('/api/buyer/credits/<int:credit_id>', methods=['GET'])
+@jwt_required()
+def get_credit_details(credit_id):
+    try:
+        credit = Credit.query.get_or_404(credit_id)
+        # Fetch usernames for auditors
+        auditors = credit.auditors or []
+        auditor_users = User.query.filter(User.id.in_(auditors)).all()
+        auditor_usernames = {user.id: user.username for user in auditor_users}
+        # Map auditor IDs to usernames, preserving order
+        auditor_list = [
+            {"id": auditor_id, "username": auditor_usernames.get(auditor_id, "Unknown")}
+            for auditor_id in auditors
+        ]
+
+        return jsonify({
+            "id": credit.id,
+            "name": credit.name,
+            "amount": credit.amount,
+            "price": credit.price,
+            "is_active": credit.is_active,
+            "is_expired": credit.is_expired,
+            "creator_id": credit.creator_id,
+            "docu_url": credit.docu_url,
+            "auditors": auditor_list,  # Return list of {id, username}
+            "req_status": credit.req_status
+        })
+    except Exception as e:
+        return jsonify({"error": "Credit not found"}), 404

@@ -5,10 +5,11 @@ import NGOSignup from './components/NGOSignup';
 import BuyerSignup from './components/BuyerSignup';
 import AuditorSignup from './components/AuditorSignup';
 import Login from './components/Login';
-import NGODashboard from './components/NGODashboard';
+import NGODashboard from './components/NGODashboard/NGODashboard';
 import BuyerDashboard from './components/BuyerDashboard';
 import AuditorDashboard from './components/AuditorDashboard'
 import TestPage from './components/testPage';
+import CreditDetails from './components/CreditDetails'
 import Home from './components/Home';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { CCProvider } from './context/SmartContractConnector';
@@ -86,6 +87,7 @@ const App = () => {
             <Route path="/auditor-signup" element={<AuditorSignup onLogin={handleLogin} />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             <Route path="/test" element={<TestPage />} />
+            <Route path="/credits/:creditId" element={<CreditDetails />} />
             <Route
               path="/NGO-dashboard"
               element={
