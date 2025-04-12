@@ -161,7 +161,7 @@ def check_expire_request():
 def check_audit_request():
     auditors = User.query.filter_by(role = 'auditor').all()
     num_auditors = len(auditors)
-    print("auditors avail:",num_auditors)
+    # print("auditors avail:",num_auditors)
 
     carbon_amount = request.args.get('amount')
     if not carbon_amount:
@@ -175,6 +175,6 @@ def check_audit_request():
     req_auditors = numberOfAuditors(int(carbon_amount))
 
     if num_auditors < req_auditors:
-        return jsonify({"message": f"Not Enough Auditors for {carbon_amount} tons of carbon. Maybe split the credit !"}), 500
+        return jsonify({"message": f"Not Enough Auditors for {carbon_amount} tons of carbon. Maybe split the credit !"}), 503
     
     return jsonify({"message": f"Enough auditors for the credit"}), 200

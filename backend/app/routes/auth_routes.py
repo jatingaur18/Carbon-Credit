@@ -32,16 +32,6 @@ def signup():
 @auth_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.json
-    #
-    # captcha_response = data.get('cf-turnstile-response')
-    # captcha_verify = requests.post('https://challenges.cloudflare.com/turnstile/v0/siteverify',
-    #                                data={
-    #                                'secret': SECRET_KEY,
-    #                                'response': captcha_response,
-    #                                }).json()
-    # if not captcha_verify.get('success'):
-    #     return jsonify({"message":"CAPTCHA failed"}),400
-    
     user = User.query.filter_by(username=data['username']).first()
 
     if user and bcrypt.check_password_hash(user.password, data['password']):

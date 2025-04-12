@@ -119,7 +119,7 @@ def remove_credit():
     # Parse request data
     data = request.json
     if not data or 'credit_id' not in data:
-        return jsonify({"message": "Missing credit_id"}), 400
+        return jsonify({"message": "Missing credit_id"}), 404
 
     credit = Credit.query.get(data['credit_id'])
     if credit:
@@ -172,16 +172,10 @@ def generate_certificate(creditId):
     credit = Credit.query.get(purchased_credit.credit_id)
     if credit is None:
         return jsonify({"message":"No such credit found"}),404
-    creator = User.query.get(purchased_credit.creator_id) if purchased_credit.creator_id else None
     
     certificate_data = generate_certificate_data(purchased_credit.id, user, purchased_credit, credit) if credit.is_expired else None
     if certificate_data is None:
         return jsonify({"message":f"No credit with {credit.id} has expired"}), 404
-    # certificate_data['creator'] = {
-    #     "id": creator.id,
-    #     "username": creator.username,
-    #     "email": creator.email
-    # } if creator else None
     
     return jsonify(certificate_data), 200
 @buyer_bp.route('/api/buyer/download-certificate/<int:creditId>',methods=['GET'])
@@ -207,10 +201,6 @@ def download_certificate(creditId):
     
     output_buffer = io.BytesIO()
     html_content = certificate_data['certificate_html']
-    # pisa.CreatePDF(
-    #     html_content,
-    #     dest=output_buffer
-    # )
     HTML(string=html_content).write_pdf(output_buffer)
     output_buffer.seek(0)
     return jsonify({

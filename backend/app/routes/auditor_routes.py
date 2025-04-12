@@ -73,7 +73,3 @@ def audit_credit(credit_id):
     db.session.commit()
 
     return jsonify({"message": f"Audit completed, vote: {data['vote']}"}), 200
-    
-
-    
-

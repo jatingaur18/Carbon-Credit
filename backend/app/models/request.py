@@ -1,7 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.mutable import MutableList
-from app.models.credit import Credit
 
 class Request(db.Model):
     __tablename__ = 'requests'
