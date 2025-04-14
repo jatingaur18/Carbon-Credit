@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { CC_Context } from "../../context/SmartContractConnector.js";
-import { Loader2, Upload, Tag, Cloud, Currency, FileText,Bitcoin } from 'lucide-react';
+import { Loader2, Upload, Tag, Cloud, Currency, FileText, Bitcoin } from 'lucide-react';
 import { FaEthereum } from "react-icons/fa6";
 import { useDropzone } from 'react-dropzone';
 import Swal from 'sweetalert2';
@@ -78,18 +78,18 @@ const CreateCreditForm = ({ setMyCredits }) => {
       return;
     }
 
-    if(newCredit.auditFees < (newCredit.amount * 0.01 * 0.01)){
+    if (newCredit.auditFees < (newCredit.amount * 0.01 * 0.01)) {
       Swal.fire({
         icon: "warning",
-        text: "Please give the minimum audit fees" 
+        text: "Please give the minimum audit fees"
       })
       return;
     }
 
-    if(newCredit.price <= 0){
+    if (newCredit.price <= 0) {
       Swal.fire({
         icon: "warning",
-        text: "Add some price !" 
+        text: "Add some price !"
       })
       return;
     }
@@ -100,11 +100,11 @@ const CreateCreditForm = ({ setMyCredits }) => {
       setPendingCr(true);
       const newCreditId = await getNextCreditId();
       const updatedCredit = { ...newCredit, creditId: Number(newCreditId), secure_url: docUrl };
-      
+
       await generateCredit(updatedCredit.amount, updatedCredit.price);
       await requestAudit(newCreditId, updatedCredit.auditFees);
       const response = await createNGOCredit(updatedCredit);
-      
+
       const updatedCredits = await getNGOCredits();
       setMyCredits(updatedCredits.data);
 
@@ -123,8 +123,8 @@ const CreateCreditForm = ({ setMyCredits }) => {
 
   return (
     <div className="p-4 bg-white rounded-md shadow-sm">
-      <h4 className="text-base font-medium text-gray-800 mb-3 flex items-center">
-        <FileText className="w-4 h-4 mr-1 text-cyan-500" />
+      <h4 className="flex items-center mb-3 text-base font-medium text-gray-800">
+        <FileText className="mr-1 w-4 h-4 text-cyan-500" />
         Create Credit
       </h4>
       <form onSubmit={handleCreateCredit} className="space-y-3">
@@ -132,8 +132,8 @@ const CreateCreditForm = ({ setMyCredits }) => {
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div className="relative">
             <label className="block text-xs font-medium text-gray-600">Name</label>
-            <div className="mt-1 flex items-center">
-              <Tag className="absolute w-4 h-4 text-gray-400 ml-2" />
+            <div className="flex items-center mt-1">
+              <Tag className="absolute ml-2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 name="name"
@@ -141,14 +141,14 @@ const CreateCreditForm = ({ setMyCredits }) => {
                 value={newCredit.name}
                 onChange={handleInputChange}
                 required
-                className="w-full pl-8 pr-2 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-cyan-300 focus:border-cyan-500 transition-colors"
+                className="py-1.5 pr-2 pl-8 w-full text-sm rounded-md border border-gray-200 transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-300 focus:outline-none"
               />
             </div>
           </div>
           <div className="relative">
             <label className="block text-xs font-medium text-gray-600">Tons of Carbon</label> {/* Changed label */}
-            <div className="mt-1 flex items-center">
-              <Cloud className="absolute w-4 h-4 text-gray-400 ml-2" /> {/* Changed icon */}
+            <div className="flex items-center mt-1">
+              <Cloud className="absolute ml-2 w-4 h-4 text-gray-400" /> {/* Changed icon */}
               <input
                 type="number"
                 name="amount"
@@ -156,14 +156,14 @@ const CreateCreditForm = ({ setMyCredits }) => {
                 value={newCredit.amount}
                 onChange={handleInputChange}
                 required
-                className="w-full pl-8 pr-2 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-cyan-300 focus:border-cyan-500 transition-colors"
+                className="py-1.5 pr-2 pl-8 w-full text-sm rounded-md border border-gray-200 transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-300 focus:outline-none"
               />
             </div>
           </div>
           <div className="relative">
             <label className="block text-xs font-medium text-gray-600">Price</label>
-            <div className="mt-1 flex items-center">
-              <FaEthereum  className="absolute w-4 h-4 text-gray-400 ml-2" /> {/* Changed icon */}
+            <div className="flex items-center mt-1">
+              <FaEthereum className="absolute ml-2 w-4 h-4 text-gray-400" /> {/* Changed icon */}
               <input
                 type="number"
                 name="price"
@@ -171,14 +171,14 @@ const CreateCreditForm = ({ setMyCredits }) => {
                 value={newCredit.price}
                 onChange={handleInputChange}
                 required
-                className="w-full pl-8 pr-2 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-cyan-300 focus:border-cyan-500 transition-colors"
+                className="py-1.5 pr-2 pl-8 w-full text-sm rounded-md border border-gray-200 transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-300 focus:outline-none"
               />
             </div>
           </div>
           <div className="relative">
             <label className="block text-xs font-medium text-gray-600">Audit Fees</label>
-            <div className="mt-1 flex items-center">
-              <FileText className="absolute w-4 h-4 text-gray-400 ml-2" />
+            <div className="flex items-center mt-1">
+              <FileText className="absolute ml-2 w-4 h-4 text-gray-400" />
               <input
                 type="number"
                 name="auditFees"
@@ -186,34 +186,33 @@ const CreateCreditForm = ({ setMyCredits }) => {
                 value={newCredit.auditFees}
                 onChange={handleInputChange}
                 required
-                className="w-full pl-8 pr-2 py-1.5 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-cyan-300 focus:border-cyan-500 transition-colors"
+                className="py-1.5 pr-2 pl-8 w-full text-sm rounded-md border border-gray-200 transition-colors focus:border-cyan-500 focus:ring-1 focus:ring-cyan-300 focus:outline-none"
               />
             </div>
           </div>
         </div>
         {/* Dropzone */}
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center">
-            <Upload className="w-3 h-3 mr-1 text-cyan-500" />
+          <label className="block flex items-center mb-1 text-xs font-medium text-gray-600">
+            <Upload className="mr-1 w-3 h-3 text-cyan-500" />
             Project PDF
           </label>
           <div
             {...getRootProps()}
-            className={`p-4 border-2 border-dashed rounded-md text-center transition-colors ${
-              isDragActive ? 'border-cyan-400 bg-emerald-50' : 'border-gray-200 bg-emerald-50'
-            } hover:border-cyan-400`}
+            className={`p-4 border-2 border-dashed rounded-md text-center transition-colors ${isDragActive ? 'border-cyan-400 bg-emerald-50' : 'border-gray-200 bg-emerald-50'
+              } hover:border-cyan-400`}
           >
             <input {...getInputProps()} />
             <div className="flex flex-col items-center">
-              <Upload className="w-5 h-5 text-gray-400 mb-1" />
+              <Upload className="mb-1 w-5 h-5 text-gray-400" />
               {isDragActive ? (
                 <p className="text-xs text-gray-600">Drop here...</p>
               ) : selectedFile ? (
                 <div className="space-y-1">
                   <p className="text-xs text-gray-700 truncate max-w-[200px]">{selectedFile.name}</p>
                   {isFileConfirmed ? (
-                    <p className="text-xs text-cyan-600 flex items-center">
-                      <FileText className="w-3 h-3 mr-1" />
+                    <p className="flex items-center text-xs text-cyan-600">
+                      <FileText className="mr-1 w-3 h-3" />
                       Uploaded
                     </p>
                   ) : (
@@ -221,17 +220,17 @@ const CreateCreditForm = ({ setMyCredits }) => {
                       <button
                         type="button"
                         onClick={onSubmit}
-                        className="px-2 py-1 bg-cyan-500 text-white text-xs font-medium rounded flex items-center hover:bg-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-300 transition-colors"
+                        className="flex items-center py-1 px-2 text-xs font-medium text-white bg-cyan-500 rounded transition-colors hover:bg-cyan-600 focus:ring-1 focus:ring-cyan-300 focus:outline-none"
                       >
-                        <Upload className="w-3 h-3 mr-1" />
+                        <Upload className="mr-1 w-3 h-3" />
                         Confirm
                       </button>
                       <button
                         type="button"
                         onClick={open}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded flex items-center hover:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-colors"
+                        className="flex items-center py-1 px-2 text-xs font-medium text-gray-600 bg-gray-100 rounded transition-colors hover:bg-gray-200 focus:ring-1 focus:ring-gray-300 focus:outline-none"
                       >
-                        <FileText className="w-3 h-3 mr-1" />
+                        <FileText className="mr-1 w-3 h-3" />
                         Replace
                       </button>
                     </div>
@@ -243,9 +242,9 @@ const CreateCreditForm = ({ setMyCredits }) => {
                   <button
                     type="button"
                     onClick={open}
-                    className="px-2 py-1 bg-cyan-500 text-white text-xs font-medium rounded flex items-center hover:bg-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-300 transition-colors"
+                    className="flex items-center py-1 px-2 ml-9 text-xs font-medium text-white bg-cyan-500 rounded transition-colors hover:bg-cyan-600 focus:ring-1 focus:ring-cyan-300 focus:outline-none"
                   >
-                    <Upload className="w-3 h-3 mr-1" />
+                    <Upload className="mr-1 w-3 h-3" />
                     Select
                   </button>
                 </div>
@@ -258,18 +257,17 @@ const CreateCreditForm = ({ setMyCredits }) => {
         <button
           type="submit"
           disabled={pendingCr}
-          className={`w-full px-3 py-1.5 bg-green-400 text-white text-sm font-medium rounded flex items-center justify-center ${
-            pendingCr ? 'opacity-50 cursor-not-allowed' : 'hover:bg-emerald-500'
-          } focus:outline-none focus:ring-1 focus:ring-cyan-300 transition-colors`}
+          className={`w-full px-3 py-1.5 bg-green-400 text-white text-sm font-medium rounded flex items-center justify-center ${pendingCr ? 'opacity-50 cursor-not-allowed' : 'hover:bg-emerald-500'
+            } focus:outline-none focus:ring-1 focus:ring-cyan-300 transition-colors`}
         >
           {pendingCr ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin mr-1" />
+              <Loader2 className="mr-1 w-4 h-4 animate-spin" />
               Generating...
             </>
           ) : (
             <>
-              <FileText className="w-4 h-4 mr-1" />
+              <FileText className="mr-1 w-4 h-4" />
               Create & Audit
             </>
           )}
