@@ -191,7 +191,7 @@ def get_purchased_credits():
         })
         if redis_client:
             try:
-                redis_client.set(key,json.dumps(credits),ex=1)
+                redis_client.set(key,json.dumps(credits),px=500)
                 print("puchased cached")
             except:
                 pass
