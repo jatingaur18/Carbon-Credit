@@ -129,8 +129,10 @@ def expire_credit(credit_id):
     # Ensure only the creator NGO can expire the credit
     if credit.creator_id != user.id:
         return jsonify({"message": "You do not have permission to expire this credit"}), 403
-
+    key = user.username 
     # Expire the credit
+    if redis_client:
+        redis_client.delete(key)
     credit.is_active = False
     credit.is_expired = True
     pc.is_expired = True
