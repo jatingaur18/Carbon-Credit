@@ -260,6 +260,7 @@ def download_certificate(creditId):
 def get_credit_details(credit_id):
     try:
         credit = Credit.query.get_or_404(credit_id)
+        user = User.query.get_or_404(credit.creator_id)
         # Fetch usernames for auditors
         auditors = credit.auditors or []
         auditor_users = User.query.filter(User.id.in_(auditors)).all()
@@ -278,6 +279,7 @@ def get_credit_details(credit_id):
             "is_active": credit.is_active,
             "is_expired": credit.is_expired,
             "creator_id": credit.creator_id,
+            "creator_name": user.username,
             "docu_url": credit.docu_url,
             "auditors": auditor_list,  # Return list of {id, username}
             "req_status": credit.req_status
