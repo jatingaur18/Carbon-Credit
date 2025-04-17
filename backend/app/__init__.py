@@ -17,7 +17,8 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.from_object(Config)
-    init_redis(app)
+    # a central invalidation logic is required
+    # init_redis(app)
     CORS(app)
     db.init_app(app)
     migrate.init_app(app,db)

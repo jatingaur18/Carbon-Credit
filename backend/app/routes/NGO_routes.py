@@ -62,7 +62,11 @@ def manage_credits():
                 "auditor_left": len(req.auditors) if req and req.auditors else 0,
                 "score": req.score if req else 0
             })
-        redis_client.set(key, json.dumps(data))
+        if redis_client:
+            try:
+                redis_client.set(key, json.dumps(data))
+            except Exception as e:
+                print(f"Redis error: {e}")
         return jsonify(data), 200
 
     # Allow the NGO to create new credits
@@ -168,7 +172,11 @@ def get_transactions():
             "timestamp": t.timestamp.isoformat(),
             "txn_hash": t.txn_hash
         })
-        redis_client.set(key,json.dumps(transaction_list),px=500)
+        if redis_client:
+            try:
+                redis_client.set(key,json.dumps(transaction_list),px=500)
+            except Exception as e:
+                print(f"Redis error: {e}")
     return jsonify(transaction_list)
 
 
