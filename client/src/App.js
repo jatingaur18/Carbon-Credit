@@ -10,17 +10,19 @@ import BuyerDashboard from './components/BuyerDashboard';
 import AuditorDashboard from './components/AuditorDashboard'
 import TestPage from './components/testPage';
 import CreditDetails from './components/CreditDetails'
+import { getHealth } from "./api/api"
 import Home from './components/Home';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { CCProvider } from './context/SmartContractConnector';
 import { jwtDecode } from "jwt-decode";
-
+import { SiRender } from "react-icons/si";
 
 
 
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [backendReady, setBackendReady] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (userData) => {
@@ -32,6 +34,24 @@ const App = () => {
     setUser(null);
   };
 
+  //checkbackend function sends req @ /api/healthz route using getHealth() middleware
+  useEffect(() => {
+
+    const checkbackend = async () => {
+      try {
+        const res = await getHealth();
+        if (res.status === 200) {
+          setBackendReady(true);
+        }
+        else {
+          setTimeout(checkbackend, 2000);
+        }
+      } catch {
+        setTimeout(checkbackend, 2000);
+      }
+    };
+    checkbackend();
+  }, []);
 
   useEffect(() => {
     document.title = "Carbon Credits";
@@ -70,9 +90,35 @@ const App = () => {
         localStorage.removeItem('token');
         navigate('/login');
       }
-
     }
   }, [navigate]);
+
+  useEffect(() => {
+    if (!backendReady) {
+      navigate('/loading');
+    } else {
+      if (window.location.pathname === '/loading') {
+        navigate('/home')
+      }
+    }
+  }, [backendReady, navigate])
+
+  //inline component
+  const LoadingScreen = () => (
+    <div style={{
+      height: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '24px',
+      fontWeight: 'bold'
+    }}>
+      <div>
+        <SiRender />
+      </div>
+      Render is restarting the service...
+    </div>
+  );
 
   return (
     <CCProvider>
@@ -81,6 +127,7 @@ const App = () => {
         <Navbar user={user} onLogout={handleLogout} />
         <div >
           <Routes>
+            <Route path='/loading' element={<LoadingScreen />} />
             <Route path="/home" element={<Home />} />
             <Route path="/NGO-signup" element={<NGOSignup onLogin={handleLogin} />} />
             <Route path="/buyer-signup" element={<BuyerSignup onLogin={handleLogin} />} />
@@ -118,7 +165,7 @@ const App = () => {
 
                 : <Navigate to="/home" replace />}
             />
-          </Routes>
+          </Routes>;
         </div>
         <SpeedInsights />
       </div>
