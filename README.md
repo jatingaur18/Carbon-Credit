@@ -1,5 +1,5 @@
 # Blockchain based Carbon Credits (Sepolia)
-
+**Backend service deployed at render is suspended for now will resume on 1st of Aug**
 
 A carbon credit trading platform leveraging React, Flask, and Solidity to promote transparency andaccountability in CSR activities which are main disadvantages of traditional carbon trading. <br>
 
